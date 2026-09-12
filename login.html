@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | The Paper Nest</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Patrick+Hand&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body class="login-body">
+
+
+    <main class="login-page">
+
+
+        <!-- LEFT SIDE -->
+
+        <section class="login-intro">
+
+            <div class="intro-content">
+
+                <div class="brand-login">
+
+                    <img
+                        src="logo.png"
+                        alt="The Paper Nest logo"
+                    >
+
+                    <div>
+
+                        <h1>
+                            The Paper Nest
+                        </h1>
+
+                        <p>
+                            PLAN • ORGANISE • GROW
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="intro-message">
+
+                    <span class="tiny-label">
+                        YOUR PERSONAL SPACE
+                    </span>
+
+                    <h2>
+                        Make room for
+                        <span>what matters.</span>
+                    </h2>
+
+                    <p>
+                        A peaceful little place to plan
+                        your days, organise your thoughts,
+                        and keep track of your progress.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-list">
+
+                    <div class="feature">
+
+                        <span class="feature-icon">
+                            ✦
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Plan your days
+                            </h3>
+
+                            <p>
+                                Keep your tasks organised
+                                and your day clear.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <span class="feature-icon">
+                            ✎
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Keep your thoughts
+                            </h3>
+
+                            <p>
+                                Save notes, ideas and
+                                little reminders.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <span class="feature-icon">
+                            🌱
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Watch yourself grow
+                            </h3>
+
+                            <p>
+                                See your progress one
+                                small step at a time.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="decorative-flower">
+                ✿
+            </div>
+
+            <div class="decorative-star">
+                ✦
+            </div>
+
+        </section>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <section class="login-section">
+
+            <div class="login-card">
+
+
+                <div class="mobile-logo">
+
+                    <img
+                        src="logo.png"
+                        alt="The Paper Nest logo"
+                    >
+
+                </div>
+
+
+                <div class="login-heading">
+
+                    <span class="tiny-label">
+                        WELCOME BACK
+                    </span>
+
+                    <h2>
+                        Hello again.
+                    </h2>
+
+                    <p>
+                        Let's get back to your nest.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+
+                <form id="loginForm">
+
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span>
+                                @
+                            </span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="you@example.com"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span>
+                                ♢
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                id="showPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="remember"
+                            >
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+
+                        <a href="#">
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Sign in to The Paper Nest
+                        <span>→</span>
+                    </button>
+
+
+                    <div
+                        class="login-message"
+                        id="loginMessage"
+                    ></div>
+
+
+                </form>
+
+
+                <div class="divider">
+
+                    <span>or</span>
+
+                </div>
+
+
+                <p class="signup-text">
+
+                    Don't have an account?
+
+                    <a href="#" id="signupLink">
+                        Create one
+                    </a>
+
+                </p>
+
+
+                <p class="login-footer">
+                    Your little space to
+                    <span>plan • focus • grow</span>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+    /* ==========================================
+       SHOW / HIDE PASSWORD
+       ========================================== */
+
+    const password =
+        document.getElementById("password");
+
+    const showPassword =
+        document.getElementById("showPassword");
+
+    showPassword.addEventListener("click", () => {
+
+        if (password.type === "password") {
+
+            password.type = "text";
+            showPassword.textContent = "Hide";
+
+        } else {
+
+            password.type = "password";
+            showPassword.textContent = "Show";
+
+        }
+
+    });
+
+
+    /* ==========================================
+       LOGIN
+       ========================================== */
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginMessage =
+        document.getElementById("loginMessage");
+
+
+    loginForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+        const passwordValue =
+            password.value.trim();
+
+
+        if (!email || !passwordValue) {
+
+            loginMessage.textContent =
+                "Please enter your email and password.";
+
+            loginMessage.className =
+                "login-message error";
+
+            return;
+
+        }
+
+
+        /* Show loading message */
+
+        loginMessage.textContent =
+            "Signing you in...";
+
+        loginMessage.className =
+            "login-message";
+
+
+        try {
+
+            /* Send login details to backend */
+
+            const response = await fetch(
+                "http://localhost:5000/api/auth/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: passwordValue
+                    })
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            /* ==================================
+               LOGIN FAILED
+               ================================== */
+
+            if (!response.ok) {
+
+                loginMessage.textContent =
+                    data.message ||
+                    "Invalid email or password.";
+
+                loginMessage.className =
+                    "login-message error";
+
+                return;
+
+            }
+
+
+            /* ==================================
+               LOGIN SUCCESSFUL
+               ================================== */
+
+            loginMessage.textContent =
+                data.message ||
+                "Login successful!";
+
+            loginMessage.className =
+                "login-message success";
+
+
+            /* Save JWT token */
+
+            if (data.token) {
+
+                localStorage.setItem(
+                    "paperNestToken",
+                    data.token
+                );
+
+            }
+
+
+            /* Save user information */
+
+            if (data.user) {
+
+                localStorage.setItem(
+                    "paperNestUser",
+                    JSON.stringify(data.user)
+                );
+
+            }
+
+
+            /* Open dashboard */
+
+            setTimeout(() => {
+
+                window.location.replace("/dashboard");
+            }, 700);
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+            loginMessage.textContent =
+                "Could not connect to the server.";
+
+            loginMessage.className =
+                "login-message error";
+
+        }
+
+    });
+
+
+    /* ==========================================
+       SIGN UP BUTTON
+       ========================================== */
+
+    document
+        .getElementById("signupLink")
+        .addEventListener("click", (event) => {
+
+            event.preventDefault();
+
+            window.location.href =
+                "signup.html";
+
+        });
+
+</script>
+
+    
+
+</body>
+</html>

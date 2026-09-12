@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Daily Planner</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">✓</div>
+            <h2>Planify</h2>
+        </div>
+
+        <nav>
+
+            <button class="nav-item active">
+                <span>📋</span>
+                My Planner
+            </button>
+
+            <button class="nav-item" id="todayBtn">
+                <span>📅</span>
+                Today
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+    <div class="user-info">
+        <p>Logged in as</p>
+        <strong id="loggedInUser">User</strong>
+    </div>
+
+    <button class="nav-item" id="themeBtn">
+        <span id="themeIcon">🌙</span>
+        Dark Mode
+    </button>
+
+    <button class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Logout
+    </button>
+
+</div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <p class="greeting">Good day 👋</p>
+                <h1>My Daily Planner</h1>
+            </div>
+
+            <div class="top-date">
+                <span id="topDate"></span>
+            </div>
+
+        </header>
+
+
+        <!-- DATE NAVIGATION -->
+        <section class="date-navigation">
+
+            <button id="prevDay" class="date-arrow">←</button>
+
+            <div class="date-display">
+
+                <p id="dayName"></p>
+
+                <h2 id="currentDate"></h2>
+
+                <span id="todayLabel">TODAY</span>
+
+            </div>
+
+            <button id="nextDay" class="date-arrow">→</button>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon blue">📋</div>
+                <div>
+                    <p>Total Tasks</p>
+                    <h3 id="totalTasks">0</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div>
+                    <p>Completed</p>
+                    <h3 id="completedTasks">0</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">⏳</div>
+                <div>
+                    <p>Pending</p>
+                    <h3 id="pendingTasks">0</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">📈</div>
+                <div>
+                    <p>Progress</p>
+                    <h3 id="progressPercentage">0%</h3>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- PROGRESS -->
+        <section class="progress-card">
+
+            <div class="progress-header">
+
+                <div>
+                    <h3>Today's Progress</h3>
+                    <p id="progressText">Let's get things done!</p>
+                </div>
+
+                <strong id="progressNumber">0%</strong>
+
+            </div>
+
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+
+        </section>
+
+
+        <!-- TASK AREA -->
+        <section class="tasks-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>My Tasks</h2>
+                    <p>Organize your day and stay productive.</p>
+                </div>
+
+                <button id="openModal" class="add-task-btn">
+                    + Add Task
+                </button>
+
+            </div>
+
+
+            <!-- SEARCH + FILTER -->
+            <div class="task-controls">
+
+                <div class="search-box">
+                    🔍
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search tasks..."
+                    >
+                </div>
+
+                <select id="categoryFilter">
+                    <option value="All">All Categories</option>
+                    <option value="Study">📚 Study</option>
+                    <option value="Work">💼 Work</option>
+                    <option value="Personal">🏠 Personal</option>
+                    <option value="Health">💪 Health</option>
+                    <option value="Other">📌 Other</option>
+                </select>
+
+                <select id="priorityFilter">
+                    <option value="All">All Priorities</option>
+                    <option value="High">🔴 High</option>
+                    <option value="Medium">🟡 Medium</option>
+                    <option value="Low">🟢 Low</option>
+                </select>
+
+            </div>
+
+
+            <!-- TASK LIST -->
+            <div id="taskList" class="task-list"></div>
+
+
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="empty-state">
+
+                <div class="empty-icon">📝</div>
+
+                <h3>No tasks yet</h3>
+
+                <p>Add a task and start planning your day.</p>
+
+                <button id="emptyAddBtn">
+                    + Add Your First Task
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ADD/EDIT TASK MODAL -->
+    <div id="taskModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2 id="modalTitle">Add New Task</h2>
+                    <p>Plan something you want to accomplish.</p>
+                </div>
+
+                <button id="closeModal" class="close-btn">×</button>
+
+            </div>
+
+
+            <form id="taskForm">
+
+                <label>
+                    Task Name
+                </label>
+
+                <input
+                    type="text"
+                    id="taskTitle"
+                    placeholder="e.g. Study Java"
+                    required
+                >
+
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    id="taskDescription"
+                    placeholder="Add some details..."
+                    rows="3"
+                ></textarea>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label>Priority</label>
+
+                        <select id="taskPriority">
+
+                            <option value="Low">🟢 Low</option>
+
+                            <option value="Medium" selected>
+                                🟡 Medium
+                            </option>
+
+                            <option value="High">
+                                🔴 High
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Category</label>
+
+                        <select id="taskCategory">
+
+                            <option value="Study">📚 Study</option>
+
+                            <option value="Work">💼 Work</option>
+
+                            <option value="Personal">🏠 Personal</option>
+
+                            <option value="Health">💪 Health</option>
+
+                            <option value="Other">📌 Other</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <label>
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="taskTime"
+                >
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelTask"
+                        class="cancel-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        Save Task
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
