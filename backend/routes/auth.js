@@ -22,12 +22,14 @@ router.post("/signup", async (req, res) => {
 
         if (!name || !email || !password) {
             return res.status(400).json({
+                success: false,
                 message: "Name, email and password are required"
             });
         }
 
         if (password.length < 6) {
             return res.status(400).json({
+                success: false,
                 message: "Password must be at least 6 characters"
             });
         }
@@ -40,6 +42,7 @@ router.post("/signup", async (req, res) => {
 
         if (existingUser) {
             return res.status(409).json({
+                success: false,
                 message: "An account with this email already exists"
             });
         }
@@ -64,6 +67,7 @@ router.post("/signup", async (req, res) => {
         );
 
         res.status(201).json({
+            success: true,
             message: "Account created successfully",
             token,
             user: {
@@ -77,6 +81,7 @@ router.post("/signup", async (req, res) => {
         console.error("Signup error:", error);
 
         res.status(500).json({
+            success: false,
             message: "Failed to create account"
         });
     }
@@ -93,6 +98,7 @@ router.post("/login", async (req, res) => {
 
         if (!email || !password) {
             return res.status(400).json({
+                success: false,
                 message: "Email and password are required"
             });
         }
@@ -105,6 +111,7 @@ router.post("/login", async (req, res) => {
 
         if (!user) {
             return res.status(401).json({
+                success: false,
                 message: "Invalid email or password"
             });
         }
@@ -116,6 +123,7 @@ router.post("/login", async (req, res) => {
 
         if (!passwordCorrect) {
             return res.status(401).json({
+                success: false,
                 message: "Invalid email or password"
             });
         }
@@ -132,6 +140,7 @@ router.post("/login", async (req, res) => {
         );
 
         res.json({
+            success: true,
             message: "Login successful",
             token,
             user: {
@@ -145,6 +154,7 @@ router.post("/login", async (req, res) => {
         console.error("Login error:", error);
 
         res.status(500).json({
+            success: false,
             message: "Login failed"
         });
     }
@@ -157,21 +167,28 @@ router.post("/login", async (req, res) => {
 
 router.post("/forgot-password", async (req, res) => {
     try {
+        console.log("FORGOT PASSWORD REQUEST RECEIVED");
+        console.log("Request body:", req.body);
+
         const { email, newPassword } = req.body;
 
         if (!email || !newPassword) {
             return res.status(400).json({
+                success: false,
                 message: "Email and new password are required"
             });
         }
 
         if (newPassword.length < 6) {
             return res.status(400).json({
+                success: false,
                 message: "New password must be at least 6 characters"
             });
         }
 
         const cleanEmail = email.trim().toLowerCase();
+
+        console.log("Looking for user:", cleanEmail);
 
         const user = await User.findOne({
             email: cleanEmail
@@ -179,6 +196,7 @@ router.post("/forgot-password", async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
+                success: false,
                 message: "No account found with this email"
             });
         }
@@ -192,16 +210,20 @@ router.post("/forgot-password", async (req, res) => {
 
         await user.save();
 
-        res.json({
+        console.log("PASSWORD RESET SUCCESSFULLY");
+
+        return res.json({
             success: true,
             message: "Password reset successfully"
         });
 
     } catch (error) {
-        console.error("Forgot password error:", error);
+        console.error("FORGOT PASSWORD ERROR:", error);
 
-        res.status(500).json({
-            message: "Could not reset password"
+        return res.status(500).json({
+            success: false,
+            message: "Could not reset password",
+            error: error.message
         });
     }
 });
@@ -217,12 +239,14 @@ router.get("/me", async (req, res) => {
 
         if (!authHeader) {
             return res.status(401).json({
+                success: false,
                 message: "No authentication token"
             });
         }
 
         if (!authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
+                success: false,
                 message: "Invalid authentication format"
             });
         }
@@ -240,11 +264,13 @@ router.get("/me", async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
+                success: false,
                 message: "User not found"
             });
         }
 
         res.json({
+            success: true,
             user: {
                 id: user._id,
                 name: user.name,
@@ -256,6 +282,7 @@ router.get("/me", async (req, res) => {
         console.error("Authentication error:", error);
 
         res.status(401).json({
+            success: false,
             message: "Invalid or expired token"
         });
     }
