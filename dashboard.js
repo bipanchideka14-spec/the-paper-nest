@@ -1074,7 +1074,9 @@ async function deleteTask(id) {
 
 
     renderTasks();
-    renderProgress();
+renderProgress();
+
+alert(`Task "${task.title}" deleted successfully!`);
 
 }
 
@@ -1364,19 +1366,22 @@ if (taskForm) {
 
 
                 data.tasks.unshift(
-                    result
-                );
+    result
+);
 
+alert(
+    `Task "${name}" added successfully!`
+);
 
-                taskForm.reset();
+taskForm.reset();
 
-                renderTasks();
+renderTasks();
 
-                renderProgress();
+renderProgress();
 
-                openPage(
-                    "planner"
-                );
+openPage(
+    "planner"
+);
 
 
             } catch (error) {
