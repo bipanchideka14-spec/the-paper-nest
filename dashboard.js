@@ -1,137 +1,10 @@
 /* =========================================================
-   THE PAPER NEST
-   DASHBOARD JAVASCRIPT
-   ========================================================= */
-
-    /* =========================================================
-   PAPER NEST CONFIRMATION MODAL
-   ========================================================= */
-
-function showConfirmation({
-    title = "Are you sure?",
-    message = "Are you sure you want to continue?",
-    icon = "🗑️",
-    confirmText = "Confirm"
-}) {
-    return new Promise((resolve) => {
-
-        const modal =
-            document.getElementById("confirmationModal");
-
-        const modalTitle =
-            document.getElementById("confirmationTitle");
-
-        const modalMessage =
-            document.getElementById("confirmationMessage");
-
-        const modalIcon =
-            document.getElementById("confirmationIcon");
-
-        const cancelButton =
-            document.getElementById("confirmationCancelBtn");
-
-        const confirmButton =
-            document.getElementById("confirmationConfirmBtn");
-
-        if (!modal) {
-            console.error(
-                "Confirmation modal not found."
-            );
-
-            resolve(false);
-            return;
-        }
-
-        modalTitle.textContent = title;
-        modalMessage.textContent = message;
-        modalIcon.textContent = icon;
-        confirmButton.textContent = confirmText;
-
-        modal.style.display = "flex";
-
-        document.body.style.overflow = "hidden";
-
-        function close(result) {
-
-            modal.style.display = "none";
-
-            document.body.style.overflow = "";
-
-            cancelButton.removeEventListener(
-                "click",
-                onCancel
-            );
-
-            confirmButton.removeEventListener(
-                "click",
-                onConfirm
-            );
-
-            modal.removeEventListener(
-                "click",
-                onBackgroundClick
-            );
-
-            document.removeEventListener(
-                "keydown",
-                onKeyDown
-            );
-
-            resolve(result);
-        }
-
-        function onCancel() {
-            close(false);
-        }
-
-        function onConfirm() {
-            close(true);
-        }
-
-        function onBackgroundClick(event) {
-
-            if (event.target === modal) {
-                close(false);
-            }
-
-        }
-
-        function onKeyDown(event) {
-
-            if (event.key === "Escape") {
-                close(false);
-            }
-
-        }
-
-        cancelButton.addEventListener(
-            "click",
-            onCancel
-        );
-
-        confirmButton.addEventListener(
-            "click",
-            onConfirm
-        );
-
-        modal.addEventListener(
-            "click",
-            onBackgroundClick
-        );
-
-        document.addEventListener(
-            "keydown",
-            onKeyDown
-        );
-
-    });
-}
-/* =========================================================
-   API URLS
+   THE PAPER NEST - DASHBOARD JAVASCRIPT
    ========================================================= */
 
 const API_URL = "/api/tasks";
 const AUTH_API_URL = "/api/auth";
+const SUBJECT_API_URL = "/api/subjects";
 
 
 /* =========================================================
@@ -141,6 +14,7 @@ const AUTH_API_URL = "/api/auth";
 const defaultData = {
 
     notes: [
+
         {
             id: 1,
             title: "Ideas for my project",
@@ -167,10 +41,11 @@ const defaultData = {
                 "Keep my tasks realistic.\n\n" +
                 "Celebrate the small wins."
         }
+
     ],
 
-
     subjects: [
+
         {
             name: "Data Science",
             progress: 78
@@ -195,20 +70,24 @@ const defaultData = {
             name: "Research",
             progress: 72
         }
+
     ]
 
 };
 
 
 /* =========================================================
-   LOCAL DATA
-   NOTES + SUBJECTS
+   DATA
    ========================================================= */
 
 let data = {
+
     tasks: [],
+
     notes: [],
+
     subjects: []
+
 };
 
 
@@ -217,26 +96,32 @@ try {
     const savedData =
         localStorage.getItem("paperNestData");
 
+
     if (savedData) {
 
         const parsed =
             JSON.parse(savedData);
+
 
         data.notes =
             Array.isArray(parsed.notes)
                 ? parsed.notes
                 : defaultData.notes;
 
+
         data.subjects =
             Array.isArray(parsed.subjects)
                 ? parsed.subjects
                 : defaultData.subjects;
-        populateSubjectDropdown();
 
     } else {
 
-        data.notes = defaultData.notes;
-        data.subjects = defaultData.subjects;
+        data.notes =
+            defaultData.notes;
+
+
+        data.subjects =
+            defaultData.subjects;
 
     }
 
@@ -247,8 +132,13 @@ try {
         error
     );
 
-    data.notes = defaultData.notes;
-    data.subjects = defaultData.subjects;
+
+    data.notes =
+        defaultData.notes;
+
+
+    data.subjects =
+        defaultData.subjects;
 
 }
 
@@ -262,11 +152,19 @@ function saveLocalData() {
     try {
 
         localStorage.setItem(
+
             "paperNestData",
+
             JSON.stringify({
-                notes: data.notes,
-                subjects: data.subjects
+
+                notes:
+                    data.notes,
+
+                subjects:
+                    data.subjects
+
             })
+
         );
 
     } catch (error) {
@@ -292,11 +190,15 @@ function getElement(...ids) {
         const element =
             document.getElementById(id);
 
+
         if (element) {
+
             return element;
+
         }
 
     }
+
 
     return null;
 
@@ -310,34 +212,38 @@ function getElement(...ids) {
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 /* =========================================================
-   AUTHENTICATION
+   LOGIN CHECK
    ========================================================= */
-
-/*
-   IMPORTANT:
-
-   Login stores the JWT as:
-
-   paperNestToken
-
-   Dashboard reads the same token.
-
-   We are NOT redirecting to login simply because
-   the /me request fails.
-
-   This allows the dashboard to open while we
-   separately display the saved account information.
-*/
 
 function checkLogin() {
 
@@ -346,28 +252,71 @@ function checkLogin() {
             "paperNestToken"
         );
 
+
     console.log(
         "Paper Nest token exists:",
         !!token
     );
 
-    /*
-       If there is no token, show login.
-    */
 
     if (!token) {
-
-        console.warn(
-            "No login token found."
-        );
 
         window.location.href =
             "/login";
 
         return false;
+
     }
 
+
     return true;
+
+}
+
+
+/* =========================================================
+   GET USER ID
+   ========================================================= */
+
+function getUserId() {
+
+    const savedUser =
+        localStorage.getItem(
+            "paperNestUser"
+        );
+
+
+    if (!savedUser) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        const user =
+            JSON.parse(savedUser);
+
+
+        return (
+            user._id ||
+            user.id ||
+            user.userId ||
+            null
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error reading user:",
+            error
+        );
+
+
+        return null;
+
+    }
 
 }
 
@@ -383,17 +332,110 @@ function loadAccount() {
             "paperNestUser"
         );
 
+
     if (!savedUser) {
+
         return;
+
     }
 
 
-    let user;
-
     try {
 
-        user =
+        const user =
             JSON.parse(savedUser);
+
+
+        if (!user) {
+
+            return;
+
+        }
+
+
+        const profileName =
+            getElement(
+                "profileName"
+            );
+
+
+        const profileAvatar =
+            getElement(
+                "profileAvatar"
+            );
+
+
+        const profilePanelAvatar =
+            getElement(
+                "profilePanelAvatar"
+            );
+
+
+        const accountName =
+            getElement(
+                "accountName"
+            );
+
+
+        const accountEmail =
+            getElement(
+                "accountEmail"
+            );
+
+
+        if (
+            profileName &&
+            user.name
+        ) {
+
+            profileName.textContent =
+                user.name;
+
+        }
+
+
+        if (
+            accountName &&
+            user.name
+        ) {
+
+            accountName.textContent =
+                user.name;
+
+        }
+
+
+        if (
+            accountEmail &&
+            user.email
+        ) {
+
+            accountEmail.textContent =
+                user.email;
+
+        }
+
+
+        const initial =
+            (user.name || "U")
+                .charAt(0)
+                .toUpperCase();
+
+
+        if (profileAvatar) {
+
+            profileAvatar.textContent =
+                initial;
+
+        }
+
+
+        if (profilePanelAvatar) {
+
+            profilePanelAvatar.textContent =
+                initial;
+
+        }
 
     } catch (error) {
 
@@ -402,80 +444,511 @@ function loadAccount() {
             error
         );
 
+    }
+
+}
+
+
+/* =========================================================
+   PAPER NEST POPUP STYLES
+   ========================================================= */
+
+function injectPopupStyles() {
+
+    if (
+        document.getElementById(
+            "paperNestPopupStyles"
+        )
+    ) {
+
         return;
+
     }
 
 
-    if (!user) {
-        return;
-    }
-
-
-    const profileName =
-        getElement(
-            "profileName"
-        );
-
-    const profileAvatar =
-        getElement(
-            "profileAvatar"
-        );
-
-    const accountName =
-        getElement(
-            "accountName"
-        );
-
-    const accountEmail =
-        getElement(
-            "accountEmail"
+    const style =
+        document.createElement(
+            "style"
         );
 
 
-    if (
-        profileName &&
-        user.name
-    ) {
+    style.id =
+        "paperNestPopupStyles";
 
-        profileName.textContent =
-            user.name;
+
+    style.textContent = `
+
+        .paper-nest-popup-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(67, 45, 32, 0.35);
+
+            backdrop-filter:
+                blur(5px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 100000;
+
+            padding: 20px;
+
+            box-sizing: border-box;
+
+        }
+
+
+        .paper-nest-popup {
+
+            width: min(390px, 100%);
+
+            box-sizing: border-box;
+
+            background: #fffaf2;
+
+            border: 1px solid #eadbc9;
+
+            border-radius: 24px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 60px
+                rgba(75, 49, 34, 0.22);
+
+        }
+
+
+        .paper-nest-popup-icon {
+
+            width: 54px;
+
+            height: 54px;
+
+            margin:
+                0 auto 16px;
+
+            border-radius: 50%;
+
+            background: #f2dfd2;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #6b4029;
+
+            font-size: 23px;
+
+        }
+
+
+        .paper-nest-popup h2 {
+
+            margin:
+                0 0 10px;
+
+            color:
+                #5d3927;
+
+            font-family:
+                Georgia, serif;
+
+            font-size:
+                26px;
+
+            font-weight:
+                500;
+
+        }
+
+
+        .paper-nest-popup p {
+
+            margin:
+                0 auto 24px;
+
+            color:
+                #927a65;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.6;
+
+        }
+
+
+        .paper-nest-popup-buttons {
+
+            display:
+                flex;
+
+            gap:
+                12px;
+
+        }
+
+
+        .paper-nest-popup-buttons button {
+
+            flex:
+                1;
+
+            min-height:
+                45px;
+
+            border-radius:
+                12px;
+
+            padding:
+                10px 15px;
+
+            border:
+                1px solid #d9c9b7;
+
+            font:
+                inherit;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+        }
+
+
+        .paper-nest-popup-cancel {
+
+            background:
+                #f5eee4;
+
+            color:
+                #705541;
+
+        }
+
+
+        .paper-nest-popup-confirm {
+
+            background:
+                #6b4029;
+
+            color:
+                white;
+
+            border-color:
+                #6b4029 !important;
+
+        }
+
+
+        .paper-nest-popup-ok {
+
+            background:
+                #6b4029;
+
+            color:
+                white;
+
+            border-color:
+                #6b4029 !important;
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .paper-nest-popup-buttons {
+
+                flex-direction:
+                    column;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE POPUP
+   ========================================================= */
+
+function closePaperNestPopup() {
+
+    const popup =
+        document.getElementById(
+            "paperNestPopup"
+        );
+
+
+    if (popup) {
+
+        popup.remove();
 
     }
 
-
-    if (
-        profileAvatar &&
-        user.name
-    ) {
-
-        profileAvatar.textContent =
-            user.name
-                .charAt(0)
-                .toUpperCase();
-
-    }
+}
 
 
-    if (
-        accountName &&
-        user.name
-    ) {
+/* =========================================================
+   CONFIRMATION POPUP
+   ========================================================= */
 
-        accountName.textContent =
-            user.name;
+function showPaperNestConfirm(
+    title,
+    message,
+    onConfirm,
+    icon = "?"
+) {
 
-    }
+    injectPopupStyles();
+
+    closePaperNestPopup();
 
 
-    if (
-        accountEmail &&
-        user.email
-    ) {
+    const popup =
+        document.createElement(
+            "div"
+        );
 
-        accountEmail.textContent =
-            user.email;
 
-    }
+    popup.id =
+        "paperNestPopup";
+
+
+    popup.className =
+        "paper-nest-popup-overlay";
+
+
+    const actionText =
+        icon === "↪"
+            ? "Log out"
+            : "Delete";
+
+
+    popup.innerHTML = `
+
+        <div
+            class="paper-nest-popup"
+            role="dialog"
+            aria-modal="true"
+        >
+
+            <div class="paper-nest-popup-icon">
+                ${icon}
+            </div>
+
+
+            <h2>
+                ${escapeHTML(title)}
+            </h2>
+
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+
+            <div
+                class="paper-nest-popup-buttons"
+            >
+
+                <button
+                    type="button"
+                    class="paper-nest-popup-cancel"
+                    id="paperNestPopupCancel"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="paper-nest-popup-confirm"
+                    id="paperNestPopupConfirm"
+                >
+                    ${actionText}
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        popup
+    );
+
+
+    document
+        .getElementById(
+            "paperNestPopupCancel"
+        )
+        .addEventListener(
+            "click",
+            closePaperNestPopup
+        );
+
+
+    document
+        .getElementById(
+            "paperNestPopupConfirm"
+        )
+        .addEventListener(
+            "click",
+            async function () {
+
+                closePaperNestPopup();
+
+                await onConfirm();
+
+            }
+        );
+
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                popup
+            ) {
+
+                closePaperNestPopup();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SUCCESS / INFORMATION POPUP
+   ========================================================= */
+
+function showPaperNestMessage(
+    message,
+    title = "Done"
+) {
+
+    injectPopupStyles();
+
+    closePaperNestPopup();
+
+
+    const popup =
+        document.createElement(
+            "div"
+        );
+
+
+    popup.id =
+        "paperNestPopup";
+
+
+    popup.className =
+        "paper-nest-popup-overlay";
+
+
+    popup.innerHTML = `
+
+        <div
+            class="paper-nest-popup"
+            role="dialog"
+            aria-modal="true"
+        >
+
+            <div class="paper-nest-popup-icon">
+                ✓
+            </div>
+
+
+            <h2>
+                ${escapeHTML(title)}
+            </h2>
+
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+
+            <div
+                class="paper-nest-popup-buttons"
+            >
+
+                <button
+                    type="button"
+                    class="paper-nest-popup-ok"
+                    id="paperNestPopupOK"
+                >
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        popup
+    );
+
+
+    document
+        .getElementById(
+            "paperNestPopupOK"
+        )
+        .addEventListener(
+            "click",
+            closePaperNestPopup
+        );
+
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                popup
+            ) {
+
+                closePaperNestPopup();
+
+            }
+
+        }
+    );
 
 }
 
@@ -489,6 +962,7 @@ const navItems =
         ".nav-item[data-page]"
     );
 
+
 const pages =
     document.querySelectorAll(
         ".page"
@@ -497,13 +971,15 @@ const pages =
 
 function openPage(pageName) {
 
-    pages.forEach(page => {
+    pages.forEach(
+        page => {
 
-        page.classList.remove(
-            "active-page"
-        );
+            page.classList.remove(
+                "active-page"
+            );
 
-    });
+        }
+    );
 
 
     const selectedPage =
@@ -521,51 +997,61 @@ function openPage(pageName) {
     }
 
 
-    navItems.forEach(item => {
+    navItems.forEach(
+        item => {
 
-        item.classList.toggle(
-            "active",
-            item.dataset.page === pageName
-        );
+            item.classList.toggle(
+                "active",
+                item.dataset.page ===
+                pageName
+            );
 
-    });
+        }
+    );
 
 
-    /*
-       Re-render pages.
-    */
-
-    if (pageName === "planner") {
+    if (
+        pageName === "planner"
+    ) {
 
         renderTasks();
 
     }
 
 
-    if (pageName === "notes") {
+    if (
+        pageName === "notes"
+    ) {
 
         renderNotes();
 
     }
 
 
-    if (pageName === "subjects") {
+    if (
+        pageName === "subjects"
+    ) {
 
         renderSubjects();
 
     }
 
 
-    if (pageName === "progress") {
+    if (
+        pageName === "progress"
+    ) {
 
         renderProgress();
 
     }
 
 
-    if (pageName === "home") {
+    if (
+        pageName === "home"
+    ) {
 
         renderTasks();
+
         renderProgress();
 
     }
@@ -583,40 +1069,44 @@ window.openPage =
     openPage;
 
 
-navItems.forEach(item => {
+navItems.forEach(
+    item => {
 
-    item.addEventListener(
-        "click",
-        function () {
+        item.addEventListener(
+            "click",
+            function () {
 
-            openPage(
-                item.dataset.page
-            );
+                openPage(
+                    item.dataset.page
+                );
 
-        }
-    );
+            }
+        );
 
-});
+    }
+);
 
 
 document
     .querySelectorAll(
         "[data-page-link]"
     )
-    .forEach(button => {
+    .forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            function () {
+            button.addEventListener(
+                "click",
+                function () {
 
-                openPage(
-                    button.dataset.pageLink
-                );
+                    openPage(
+                        button.dataset.pageLink
+                    );
 
-            }
-        );
+                }
+            );
 
-    });
+        }
+    );
 
 
 /* =========================================================
@@ -630,8 +1120,11 @@ function displayDate() {
             "currentDate"
         );
 
+
     if (!currentDate) {
+
         return;
+
     }
 
 
@@ -640,16 +1133,19 @@ function displayDate() {
 
 
     currentDate.textContent =
-        today
-            .toLocaleDateString(
-                "en-US",
-                {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric"
-                }
-            )
-            .toUpperCase();
+        today.toLocaleDateString(
+            "en-US",
+            {
+                weekday:
+                    "long",
+
+                month:
+                    "long",
+
+                day:
+                    "numeric"
+            }
+        ).toUpperCase();
 
 }
 
@@ -658,21 +1154,15 @@ displayDate();
 
 
 /* =========================================================
-   TASK API
+   TASK API - LOAD
    ========================================================= */
-
-
-/*
-   LOAD TASKS FROM MONGODB
-*/
 
 async function loadTasks() {
 
     try {
 
-        console.log(
-            "Loading tasks from MongoDB..."
-        );
+        const userId =
+            getUserId();
 
 
         const token =
@@ -681,48 +1171,67 @@ async function loadTasks() {
             );
 
 
+        if (!userId) {
+
+            data.tasks = [];
+
+            renderTasks();
+
+            renderProgress();
+
+            return;
+
+        }
+
+
         const response =
             await fetch(
                 API_URL,
                 {
-                    headers: token
-                        ? {
-                            "Authorization":
-                                `Bearer ${token}`
-                        }
-                        : {}
+                    method:
+                        "GET",
+
+                    headers: {
+
+                        "user-id":
+                            userId,
+
+                        ...(token
+                            ? {
+                                "Authorization":
+                                    `Bearer ${token}`
+                            }
+                            : {})
+
+                    }
+
                 }
             );
+
+
+        const result =
+            await response.json();
 
 
         if (!response.ok) {
 
             throw new Error(
+                result.message ||
                 "Failed to load tasks"
             );
 
         }
 
 
-        const tasks =
-            await response.json();
-
-
         data.tasks =
-            Array.isArray(tasks)
-                ? tasks
+            Array.isArray(result)
+                ? result
                 : [];
 
 
-        console.log(
-            "Tasks loaded:",
-            data.tasks
-        );
-
-
         renderTasks();
-        renderProgress();
 
+        renderProgress();
 
     } catch (error) {
 
@@ -731,12 +1240,11 @@ async function loadTasks() {
             error
         );
 
-        /*
-           Don't redirect to login here.
-           The dashboard itself should remain visible.
-        */
+
+        data.tasks = [];
 
         renderTasks();
+
         renderProgress();
 
     }
@@ -751,7 +1259,8 @@ async function loadTasks() {
 function createTaskHTML(task) {
 
     const taskId =
-        task._id || task.id;
+        task._id ||
+        task.id;
 
 
     return `
@@ -774,7 +1283,7 @@ function createTaskHTML(task) {
                             : ""
                     }"
                     type="button"
-                    onclick="toggleTask('${taskId}')"
+                    onclick="toggleTask('${escapeHTML(taskId)}')"
                     title="Mark task complete"
                 >
                     ${
@@ -787,24 +1296,26 @@ function createTaskHTML(task) {
 
                 <div class="task-details">
 
-                    <h3 class="${
-                        task.completed
-                            ? "completed-task"
-                            : ""
-                    }">
-
+                    <h3
+                        class="${
+                            task.completed
+                                ? "completed-task"
+                                : ""
+                        }"
+                    >
                         ${escapeHTML(
                             task.title
                         )}
-
                     </h3>
 
 
                     <p>
 
                         ${
-                            task.time ||
-                            "Anytime"
+                            escapeHTML(
+                                task.time ||
+                                "Anytime"
+                            )
                         }
 
                         ${
@@ -832,19 +1343,17 @@ function createTaskHTML(task) {
                             : ""
                     }"
                 >
-
                     ${escapeHTML(
                         task.priority ||
                         "Normal"
                     )}
-
                 </span>
 
 
                 <button
                     class="task-delete"
                     type="button"
-                    onclick="deleteTask('${taskId}')"
+                    onclick="deleteTask('${escapeHTML(taskId)}')"
                     title="Delete task"
                     aria-label="Delete task"
                 >
@@ -870,6 +1379,7 @@ function renderTasks() {
         getElement(
             "homeTasks"
         );
+
 
     const plannerTasks =
         getElement(
@@ -941,14 +1451,14 @@ function emptyMessage(message) {
 
     return `
 
-        <p style="
-            color:#927a65;
-            font-size:12px;
-            padding:20px 0;
-        ">
-
+        <p
+            style="
+                color:#927a65;
+                font-size:12px;
+                padding:20px 0;
+            "
+        >
             ${escapeHTML(message)}
-
         </p>
 
     `;
@@ -964,27 +1474,29 @@ async function toggleTask(id) {
 
     const task =
         data.tasks.find(
-            task =>
+            item =>
                 String(
-                    task._id ||
-                    task.id
-                ) === String(id)
+                    item._id ||
+                    item.id
+                ) ===
+                String(id)
         );
 
 
     if (!task) {
+
         return;
+
     }
 
-
-    /*
-       If this is a MongoDB task,
-       update it in MongoDB.
-    */
 
     if (task._id) {
 
         try {
+
+            const userId =
+                getUserId();
+
 
             const token =
                 localStorage.getItem(
@@ -996,11 +1508,16 @@ async function toggleTask(id) {
                 await fetch(
                     `${API_URL}/${id}`,
                     {
-                        method: "PUT",
+                        method:
+                            "PUT",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json",
+
+                            "user-id":
+                                userId || "",
 
                             ...(token
                                 ? {
@@ -1008,6 +1525,7 @@ async function toggleTask(id) {
                                         `Bearer ${token}`
                                 }
                                 : {})
+
                         },
 
                         body:
@@ -1015,21 +1533,23 @@ async function toggleTask(id) {
                                 completed:
                                     !task.completed
                             })
+
                     }
                 );
+
+
+            const result =
+                await response.json();
 
 
             if (!response.ok) {
 
                 throw new Error(
+                    result.message ||
                     "Could not update task"
                 );
 
             }
-
-
-            const result =
-                await response.json();
 
 
             const index =
@@ -1037,7 +1557,8 @@ async function toggleTask(id) {
                     item =>
                         String(
                             item._id
-                        ) === String(id)
+                        ) ===
+                        String(id)
                 );
 
 
@@ -1048,7 +1569,6 @@ async function toggleTask(id) {
 
             }
 
-
         } catch (error) {
 
             console.error(
@@ -1056,16 +1576,23 @@ async function toggleTask(id) {
                 error
             );
 
+
+            showPaperNestMessage(
+                error.message ||
+                "Task could not be updated.",
+                "Update failed"
+            );
+
+
+            return;
+
         }
 
     } else {
 
-        /*
-           Old/local task.
-        */
-
         task.completed =
             !task.completed;
+
 
         saveLocalData();
 
@@ -1073,6 +1600,7 @@ async function toggleTask(id) {
 
 
     renderTasks();
+
     renderProgress();
 
 }
@@ -1090,116 +1618,143 @@ async function deleteTask(id) {
 
     const task =
         data.tasks.find(
-            task =>
+            item =>
                 String(
-                    task._id ||
-                    task.id
-                ) === String(id)
+                    item._id ||
+                    item.id
+                ) ===
+                String(id)
         );
 
 
     if (!task) {
+
         return;
+
     }
 
 
-    const confirmed = await showConfirmation({
-    title: "Delete task?",
-    message: `Are you sure you want to delete "${task.title}"?`,
-    icon: "🗑️",
-    confirmText: "Delete"
-});
+    showPaperNestConfirm(
 
-if (!confirmed) {
-    return;
-}
+        `Delete "${task.title}"?`,
 
+        "This task will be removed from your planner.",
 
-    /*
-       MongoDB task
-    */
+        async function () {
 
-    if (task._id) {
+            if (task._id) {
 
-        try {
+                try {
 
-            const token =
-                localStorage.getItem(
-                    "paperNestToken"
-                );
+                    const userId =
+                        getUserId();
 
 
-            const response =
-                await fetch(
-                    `${API_URL}/${id}`,
-                    {
-                        method: "DELETE",
+                    const token =
+                        localStorage.getItem(
+                            "paperNestToken"
+                        );
 
-                        headers: token
-                            ? {
-                                "Authorization":
-                                    `Bearer ${token}`
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/${id}`,
+                            {
+                                method:
+                                    "DELETE",
+
+                                headers: {
+
+                                    "user-id":
+                                        userId || "",
+
+                                    ...(token
+                                        ? {
+                                            "Authorization":
+                                                `Bearer ${token}`
+                                        }
+                                        : {})
+
+                                }
+
                             }
-                            : {}
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.message ||
+                            "Could not delete task"
+                        );
+
                     }
-                );
 
 
-            if (!response.ok) {
+                    data.tasks =
+                        data.tasks.filter(
+                            item =>
+                                String(
+                                    item._id
+                                ) !==
+                                String(id)
+                        );
 
-                throw new Error(
-                    "Could not delete task"
-                );
+
+                } catch (error) {
+
+                    console.error(
+                        "Error deleting task:",
+                        error
+                    );
+
+
+                    showPaperNestMessage(
+                        error.message ||
+                        "Task could not be deleted.",
+                        "Delete failed"
+                    );
+
+
+                    return;
+
+                }
+
+            } else {
+
+                data.tasks =
+                    data.tasks.filter(
+                        item =>
+                            String(
+                                item.id
+                            ) !==
+                            String(id)
+                    );
+
+
+                saveLocalData();
 
             }
 
 
-            data.tasks =
-                data.tasks.filter(
-                    item =>
-                        String(
-                            item._id
-                        ) !== String(id)
-                );
+            renderTasks();
+
+            renderProgress();
 
 
-        } catch (error) {
-
-            console.error(
-                "Error deleting task:",
-                error
+            showPaperNestMessage(
+                `Task "${task.title}" deleted successfully!`
             );
 
-            alert(
-                "Task could not be deleted."
-            );
+        },
 
-            return;
+        "🗑"
 
-        }
-
-    } else {
-
-        /*
-           Local task
-        */
-
-        data.tasks =
-            data.tasks.filter(
-                item =>
-                    String(item.id) !==
-                    String(id)
-            );
-
-        saveLocalData();
-
-    }
-
-
-    renderTasks();
-renderProgress();
-
-alert(`Task "${task.title}" deleted successfully!`);
+    );
 
 }
 
@@ -1209,7 +1764,7 @@ window.deleteTask =
 
 
 /* =========================================================
-   STATISTICS
+   UPDATE STATISTICS
    ========================================================= */
 
 function updateStatistics() {
@@ -1226,15 +1781,18 @@ function updateStatistics() {
 
 
     const pending =
-        total - completed;
+        total -
+        completed;
 
 
     const percentage =
         total === 0
             ? 0
             : Math.round(
-                (completed /
-                    total) *
+                (
+                    completed /
+                    total
+                ) *
                 100
             );
 
@@ -1244,20 +1802,24 @@ function updateStatistics() {
             "totalTasks"
         );
 
+
     const completedTasks =
         getElement(
             "completedTasks"
         );
+
 
     const pendingTasks =
         getElement(
             "pendingTasks"
         );
 
+
     const productivity =
         getElement(
             "productivity"
         );
+
 
     const circlePercentage =
         getElement(
@@ -1292,7 +1854,8 @@ function updateStatistics() {
     if (productivity) {
 
         productivity.textContent =
-            percentage + "%";
+            percentage +
+            "%";
 
     }
 
@@ -1300,7 +1863,8 @@ function updateStatistics() {
     if (circlePercentage) {
 
         circlePercentage.textContent =
-            percentage + "%";
+            percentage +
+            "%";
 
     }
 
@@ -1327,7 +1891,9 @@ function updateCircle(
 
 
     if (!circle) {
+
         return;
+
     }
 
 
@@ -1366,15 +1932,18 @@ if (taskForm) {
                     "taskTitle"
                 );
 
+
             const timeInput =
                 getElement(
                     "taskTime"
                 );
 
+
             const subjectInput =
                 getElement(
                     "taskSubject"
                 );
+
 
             const priorityInput =
                 getElement(
@@ -1383,7 +1952,9 @@ if (taskForm) {
 
 
             if (!nameInput) {
+
                 return;
+
             }
 
 
@@ -1393,11 +1964,35 @@ if (taskForm) {
 
             if (!name) {
 
-                alert(
-                    "Please enter a task."
+                showPaperNestMessage(
+                    "Please enter a task.",
+                    "Task needed"
                 );
 
+
                 nameInput.focus();
+
+                return;
+
+            }
+
+
+            const userId =
+                getUserId();
+
+
+            const token =
+                localStorage.getItem(
+                    "paperNestToken"
+                );
+
+
+            if (!userId) {
+
+                showPaperNestMessage(
+                    "Please log in again.",
+                    "Login required"
+                );
 
                 return;
 
@@ -1416,7 +2011,8 @@ if (taskForm) {
 
             const newTask = {
 
-                title: name,
+                title:
+                    name,
 
                 time:
                     timeInput
@@ -1433,30 +2029,31 @@ if (taskForm) {
                         ? priorityInput.value
                         : "Normal",
 
-                completed: false,
+                completed:
+                    false,
 
-                date: date
+                date:
+                    date
 
             };
 
 
             try {
 
-                const token =
-                    localStorage.getItem(
-                        "paperNestToken"
-                    );
-
-
                 const response =
                     await fetch(
                         API_URL,
                         {
-                            method: "POST",
+                            method:
+                                "POST",
 
                             headers: {
+
                                 "Content-Type":
                                     "application/json",
+
+                                "user-id":
+                                    userId,
 
                                 ...(token
                                     ? {
@@ -1464,12 +2061,14 @@ if (taskForm) {
                                             `Bearer ${token}`
                                     }
                                     : {})
+
                             },
 
                             body:
                                 JSON.stringify(
                                     newTask
                                 )
+
                         }
                     );
 
@@ -1489,23 +2088,28 @@ if (taskForm) {
 
 
                 data.tasks.unshift(
-    result
-);
+                    result
+                );
 
-alert(
-    `Task "${name}" added successfully!`
-);
 
-taskForm.reset();
+                taskForm.reset();
 
-renderTasks();
 
-renderProgress();
+                renderTasks();
 
-openPage(
-    "planner"
-);
+                renderProgress();
 
+
+                openPage(
+                    "planner"
+                );
+
+
+                /*
+                   IMPORTANT:
+                   There is NO success popup here.
+                   Task is added silently.
+                */
 
             } catch (error) {
 
@@ -1515,8 +2119,10 @@ openPage(
                 );
 
 
-                alert(
-                    "Task could not be added. Check the server terminal."
+                showPaperNestMessage(
+                    error.message ||
+                    "Task could not be added. Check the server.",
+                    "Could not add task"
                 );
 
             }
@@ -1559,7 +2165,9 @@ if (homeAddTask) {
 
 
                     if (input) {
+
                         input.focus();
+
                     }
 
                 },
@@ -1604,7 +2212,9 @@ if (newTaskButton) {
 
 
                     if (input) {
+
                         input.focus();
+
                     }
 
                 },
@@ -1630,7 +2240,9 @@ function renderNotes() {
 
 
     if (!notesGrid) {
+
         return;
+
     }
 
 
@@ -1657,13 +2269,18 @@ function renderNotes() {
                         class="paper-card note-card"
                     >
 
-                        <div style="
-                            display:flex;
-                            justify-content:space-between;
-                            align-items:center;
-                        ">
+                        <div
+                            style="
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                                gap:10px;
+                            "
+                        >
 
-                            <p class="small-heading">
+                            <p
+                                class="small-heading"
+                            >
 
                                 NOTE ${
                                     String(
@@ -1677,34 +2294,55 @@ function renderNotes() {
                             </p>
 
 
-                            <button
-                                type="button"
-                                class="note-delete"
-                                onclick="deleteNote(${note.id})"
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:6px;
+                                    align-items:center;
+                                "
                             >
-                                🗑️
-                            </button>
+
+                                <button
+                                    type="button"
+                                    class="note-edit"
+                                    onclick="editNote(${note.id})"
+                                    title="Edit note"
+                                    aria-label="Edit note"
+                                >
+                                    ✏️
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="note-delete"
+                                    onclick="deleteNote(${note.id})"
+                                    title="Delete note"
+                                    aria-label="Delete note"
+                                >
+                                    🗑️
+                                </button>
+
+                            </div>
 
                         </div>
 
 
                         <h3>
-
                             ${escapeHTML(
                                 note.title
                             )}
-
                         </h3>
 
 
-                        <p style="
-                            white-space:pre-line;
-                        ">
-
+                        <p
+                            style="
+                                white-space:pre-line;
+                            "
+                        >
                             ${escapeHTML(
                                 note.content
                             )}
-
                         </p>
 
                     </article>
@@ -1724,39 +2362,54 @@ function deleteNote(id) {
 
     const note =
         data.notes.find(
-            note =>
-                String(note.id) ===
+            item =>
+                String(
+                    item.id
+                ) ===
                 String(id)
         );
 
 
     if (!note) {
+
         return;
+
     }
 
 
-    const confirmed =
-        confirm(
-            `Delete "${note.title}"?`
-        );
+    showPaperNestConfirm(
+
+        `Delete "${note.title}"?`,
+
+        "This note will be removed from your Paper Nest.",
+
+        async function () {
+
+            data.notes =
+                data.notes.filter(
+                    item =>
+                        String(
+                            item.id
+                        ) !==
+                        String(id)
+                );
 
 
-    if (!confirmed) {
-        return;
-    }
+            saveLocalData();
 
 
-    data.notes =
-        data.notes.filter(
-            note =>
-                String(note.id) !==
-                String(id)
-        );
+            renderNotes();
 
 
-    saveLocalData();
+            showPaperNestMessage(
+                `Note "${note.title}" deleted successfully!`
+            );
 
-    renderNotes();
+        },
+
+        "🗑"
+
+    );
 
 }
 
@@ -1774,21 +2427,112 @@ const noteModal =
         "noteModal"
     );
 
+
 const newNoteButton =
     getElement(
         "newNoteButton"
     );
+
 
 const closeNoteButton =
     getElement(
         "closeNote"
     );
 
+
 const saveNoteButton =
     getElement(
         "saveNote"
     );
 
+
+let editingNoteId =
+    null;
+
+
+/* =========================================================
+   RESET NOTE MODAL
+   ========================================================= */
+
+function resetNoteModal() {
+
+    editingNoteId =
+        null;
+
+
+    const titleInput =
+        getElement(
+            "noteTitle"
+        );
+
+
+    const contentInput =
+        getElement(
+            "noteContent"
+        );
+
+
+    if (titleInput) {
+
+        titleInput.value =
+            "";
+
+    }
+
+
+    if (contentInput) {
+
+        contentInput.value =
+            "";
+
+    }
+
+
+    if (noteModal) {
+
+        const heading =
+            noteModal.querySelector(
+                "h3"
+            );
+
+
+        const smallHeading =
+            noteModal.querySelector(
+                ".small-heading"
+            );
+
+
+        if (heading) {
+
+            heading.textContent =
+                "What are you thinking?";
+
+        }
+
+
+        if (smallHeading) {
+
+            smallHeading.textContent =
+                "NEW NOTE";
+
+        }
+
+    }
+
+
+    if (saveNoteButton) {
+
+        saveNoteButton.textContent =
+            "Save Note";
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN NEW NOTE
+   ========================================================= */
 
 if (
     newNoteButton &&
@@ -1798,6 +2542,9 @@ if (
     newNoteButton.addEventListener(
         "click",
         function () {
+
+            resetNoteModal();
+
 
             noteModal.classList.add(
                 "show"
@@ -1811,7 +2558,9 @@ if (
 
 
             if (titleInput) {
+
                 titleInput.focus();
+
             }
 
         }
@@ -1819,6 +2568,10 @@ if (
 
 }
 
+
+/* =========================================================
+   CLOSE NOTE
+   ========================================================= */
 
 function closeNoteModal() {
 
@@ -1864,6 +2617,122 @@ if (noteModal) {
 }
 
 
+/* =========================================================
+   EDIT NOTE
+   ========================================================= */
+
+function editNote(id) {
+
+    const note =
+        data.notes.find(
+            item =>
+                String(
+                    item.id
+                ) ===
+                String(id)
+        );
+
+
+    if (
+        !note ||
+        !noteModal
+    ) {
+
+        return;
+
+    }
+
+
+    editingNoteId =
+        id;
+
+
+    const titleInput =
+        getElement(
+            "noteTitle"
+        );
+
+
+    const contentInput =
+        getElement(
+            "noteContent"
+        );
+
+
+    const heading =
+        noteModal.querySelector(
+            "h3"
+        );
+
+
+    const smallHeading =
+        noteModal.querySelector(
+            ".small-heading"
+        );
+
+
+    if (titleInput) {
+
+        titleInput.value =
+            note.title || "";
+
+    }
+
+
+    if (contentInput) {
+
+        contentInput.value =
+            note.content || "";
+
+    }
+
+
+    if (heading) {
+
+        heading.textContent =
+            "Edit your thought";
+
+    }
+
+
+    if (smallHeading) {
+
+        smallHeading.textContent =
+            "EDIT NOTE";
+
+    }
+
+
+    if (saveNoteButton) {
+
+        saveNoteButton.textContent =
+            "Update Note";
+
+    }
+
+
+    noteModal.classList.add(
+        "show"
+    );
+
+
+    if (titleInput) {
+
+        titleInput.focus();
+
+    }
+
+}
+
+
+window.editNote =
+    editNote;
+
+
+/* =========================================================
+   SAVE / UPDATE NOTE
+   ========================================================= */
+
 if (saveNoteButton) {
 
     saveNoteButton.addEventListener(
@@ -1874,6 +2743,7 @@ if (saveNoteButton) {
                 getElement(
                     "noteTitle"
                 );
+
 
             const contentInput =
                 getElement(
@@ -1898,8 +2768,9 @@ if (saveNoteButton) {
                 !content
             ) {
 
-                alert(
-                    "Please write something first."
+                showPaperNestMessage(
+                    "Please write something first.",
+                    "Note needed"
                 );
 
                 return;
@@ -1907,9 +2778,72 @@ if (saveNoteButton) {
             }
 
 
+            /* EDIT EXISTING NOTE */
+
+            if (
+                editingNoteId !==
+                null
+            ) {
+
+                const index =
+                    data.notes.findIndex(
+                        item =>
+                            String(
+                                item.id
+                            ) ===
+                            String(
+                                editingNoteId
+                            )
+                    );
+
+
+                if (index !== -1) {
+
+                    data.notes[index] = {
+
+                        ...data.notes[index],
+
+                        title:
+                            title ||
+                            "Untitled Note",
+
+                        content:
+                            content
+
+                    };
+
+
+                    const updatedTitle =
+                        data.notes[index].title;
+
+
+                    saveLocalData();
+
+                    renderNotes();
+
+                    closeNoteModal();
+
+                    resetNoteModal();
+
+
+                    showPaperNestMessage(
+                        `Note "${updatedTitle}" updated successfully!`
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* CREATE NEW NOTE */
+
             data.notes.unshift({
 
-                id: Date.now(),
+                id:
+                    Date.now(),
 
                 title:
                     title ||
@@ -1925,18 +2859,9 @@ if (saveNoteButton) {
 
             renderNotes();
 
-
-            if (titleInput) {
-                titleInput.value = "";
-            }
-
-
-            if (contentInput) {
-                contentInput.value = "";
-            }
-
-
             closeNoteModal();
+
+            resetNoteModal();
 
         }
     );
@@ -1945,139 +2870,134 @@ if (saveNoteButton) {
 
 
 /* =========================================================
-   SUBJECTS
+   SUBJECT DROPDOWN
    ========================================================= */
 
-const SUBJECT_API_URL = "/api/subjects";
-
-
-/* ---------------------------------------------------------
-   GET LOGGED-IN USER ID
-   --------------------------------------------------------- */
-
-function getUserId() {
-
-    const savedUser = localStorage.getItem("paperNestUser");
-
-    if (!savedUser) {
-        return null;
-    }
-
-    try {
-
-        const user = JSON.parse(savedUser);
-
-        return user._id || user.id || user.userId || null;
-
-    } catch (error) {
-
-        console.error("Error reading user:", error);
-
-        return null;
-    }
-}
-
 function populateSubjectDropdown() {
 
     const dropdown =
-        document.getElementById("taskSubject");
+        document.getElementById(
+            "taskSubject"
+        );
+
 
     if (!dropdown) {
+
         return;
+
     }
 
-    dropdown.innerHTML = "";
 
-    const generalOption =
-        document.createElement("option");
-
-    generalOption.value = "General";
-    generalOption.textContent = "General";
-
-    dropdown.appendChild(generalOption);
+    dropdown.innerHTML =
+        "";
 
 
-    data.subjects.forEach(subject => {
+    const general =
+        document.createElement(
+            "option"
+        );
 
-        const option =
-            document.createElement("option");
 
-        option.value = subject.name;
-        option.textContent = subject.name;
+    general.value =
+        "General";
 
-        dropdown.appendChild(option);
 
-    });
+    general.textContent =
+        "General";
+
+
+    dropdown.appendChild(
+        general
+    );
+
+
+    if (
+        Array.isArray(
+            data.subjects
+        )
+    ) {
+
+        data.subjects.forEach(
+            subject => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    subject.name;
+
+
+                option.textContent =
+                    subject.name;
+
+
+                dropdown.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
 
 }
-/* ---------------------------------------------------------
+
+
+/* =========================================================
    LOAD SUBJECTS FROM MONGODB
-   --------------------------------------------------------- */
-function populateSubjectDropdown() {
+   ========================================================= */
 
-    const dropdown =
-        document.getElementById("taskSubject");
-
-    if (!dropdown) return;
-
-    dropdown.innerHTML = "";
-
-    const generalOption =
-        document.createElement("option");
-
-    generalOption.value = "General";
-    generalOption.textContent = "General";
-
-    dropdown.appendChild(generalOption);
-
-    data.subjects.forEach(subject => {
-
-        const option =
-            document.createElement("option");
-
-        option.value = subject.name;
-        option.textContent = subject.name;
-
-        dropdown.appendChild(option);
-
-    });
-}
 async function loadSubjects() {
 
     try {
 
-        const userId = getUserId();
+        const userId =
+            getUserId();
+
 
         if (!userId) {
 
-            console.warn("No user ID found.");
-
             data.subjects = [];
+
             populateSubjectDropdown();
 
             renderSubjects();
+
             renderProgress();
 
             return;
+
         }
 
 
-        console.log("Loading subjects from MongoDB...");
-
-
-        const response = await fetch(
-            SUBJECT_API_URL,
-            {
-                method: "GET",
-
-                headers: {
-                    "user-id": userId
-                }
-            }
+        console.log(
+            "Loading subjects from MongoDB..."
         );
 
 
-        const result = await response.json();
+        const response =
+            await fetch(
+                SUBJECT_API_URL,
+                {
+                    method:
+                        "GET",
+
+                    headers: {
+
+                        "user-id":
+                            userId
+
+                    }
+
+                }
+            );
+
+
+        const result =
+            await response.json();
 
 
         if (!response.ok) {
@@ -2091,20 +3011,24 @@ async function loadSubjects() {
 
 
         data.subjects =
-            Array.isArray(result.subjects)
+            Array.isArray(
+                result.subjects
+            )
                 ? result.subjects
                 : [];
+
+
+        populateSubjectDropdown();
+
+        renderSubjects();
+
+        renderProgress();
 
 
         console.log(
             "Subjects loaded:",
             data.subjects
         );
-
-
-        renderSubjects();
-        renderProgress();
-
 
     } catch (error) {
 
@@ -2113,158 +3037,780 @@ async function loadSubjects() {
             error
         );
 
+
+        populateSubjectDropdown();
+
         renderSubjects();
+
         renderProgress();
+
     }
 
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    RENDER SUBJECTS
-   --------------------------------------------------------- */
+   ========================================================= */
+
 function renderSubjects() {
 
+    /*
+       Your dashboard.html uses:
+       subjectsContainer
+
+       We also support subjectsGrid in case
+       you use that ID later.
+    */
+
     const container =
-        getElement("subjectsContainer");
-
-    /*
-     * Update Planner Subject dropdown
-     */
-    const dropdown =
-        document.getElementById("taskSubject");
-
-    if (dropdown) {
-
-        dropdown.innerHTML = "";
-
-        const generalOption =
-            document.createElement("option");
-
-        generalOption.value = "General";
-        generalOption.textContent = "General";
-
-        dropdown.appendChild(generalOption);
+        getElement(
+            "subjectsContainer",
+            "subjectsGrid"
+        );
 
 
-        if (Array.isArray(data.subjects)) {
-
-            data.subjects.forEach(subject => {
-
-                const option =
-                    document.createElement("option");
-
-                option.value = subject.name;
-                option.textContent = subject.name;
-
-                dropdown.appendChild(option);
-
-            });
-
-        }
-    }
-
-
-    /*
-     * Display subjects
-     */
     if (!container) {
+
+        console.error(
+            "Subjects container not found."
+        );
+
         return;
+
     }
+
+
+    populateSubjectDropdown();
 
 
     if (
-        !Array.isArray(data.subjects) ||
+        !Array.isArray(
+            data.subjects
+        ) ||
         data.subjects.length === 0
     ) {
 
         container.innerHTML =
-            emptyMessage("No subjects added yet.");
+            emptyMessage(
+                "No subjects added yet."
+            );
 
         return;
+
     }
 
 
     container.innerHTML =
         data.subjects
-            .map(subject => {
+            .map(
+                subject => {
 
-                const progress =
-                    Number(subject.progress) || 0;
+                    const progress =
+                        Math.max(
+                            0,
+                            Math.min(
+                                100,
+                                Number(
+                                    subject.progress
+                                ) || 0
+                            )
+                        );
 
-                return `
-                    <div class="paper-card subject-card">
 
-                        <div class="subject-header">
+                    const subjectId =
+                        subject._id ||
+                        subject.id;
 
-                            <h3>
-                                ${escapeHTML(subject.name)}
-                            </h3>
 
-                            <span class="subject-percent">
-                                ${progress}%
-                            </span>
+                    return `
+
+                        <div
+                            class="paper-card subject-card"
+                        >
+
+                            <div
+                                class="subject-header"
+                            >
+
+                                <h3>
+                                    ${escapeHTML(
+                                        subject.name
+                                    )}
+                                </h3>
+
+
+                                <span
+                                    class="subject-percent"
+                                >
+                                    ${progress}%
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="progress-bar"
+                            >
+
+                                <span
+                                    style="
+                                        width:
+                                        ${progress}%;
+                                    "
+                                ></span>
+
+                            </div>
+
+
+                            <small>
+                                Keep nurturing this subject 🌱
+                            </small>
+
+
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    margin-top:18px;
+                                "
+                            >
+
+                                <button
+                                    type="button"
+                                    class="subject-edit-btn"
+                                    onclick="editSubject('${escapeHTML(subjectId)}')"
+                                    style="
+                                        border:1px solid #d9c9b7;
+                                        background:#f5eee4;
+                                        color:#705541;
+                                        padding:9px 12px;
+                                        border-radius:10px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    ✏️ Edit
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="subject-delete-btn"
+                                    onclick="deleteSubject('${escapeHTML(subjectId)}')"
+                                    style="
+                                        border:1px solid #d9c9b7;
+                                        background:#f2dfd2;
+                                        color:#6b4029;
+                                        padding:9px 12px;
+                                        border-radius:10px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    🗑️ Delete
+                                </button>
+
+                            </div>
 
                         </div>
 
-                        <div class="progress-bar">
+                    `;
 
-                            <span
-                                style="width: ${progress}%"
-                            ></span>
-
-                        </div>
-
-                        <small>
-                            Keep nurturing this subject 🌱
-                        </small>
-
-                    </div>
-                `;
-
-            })
+                }
+            )
             .join("");
+
 }
 
-/* ---------------------------------------------------------
-   ADD SUBJECT
-   --------------------------------------------------------- */
 
-async function addSubject(name, progress = 0) {
+/* =========================================================
+   SUBJECT MODAL
+   ========================================================= */
+
+const addSubjectBtn =
+    document.getElementById(
+        "addSubjectBtn"
+    );
+
+
+const subjectModal =
+    document.getElementById(
+        "subjectModal"
+    );
+
+
+const closeSubjectModalButton =
+    document.getElementById(
+        "closeSubjectModal"
+    );
+
+
+const cancelSubjectBtn =
+    document.getElementById(
+        "cancelSubjectBtn"
+    );
+
+
+const saveSubjectBtn =
+    document.getElementById(
+        "saveSubjectBtn"
+    );
+
+
+const subjectNameInput =
+    document.getElementById(
+        "subjectName"
+    );
+
+
+const subjectProgressInput =
+    document.getElementById(
+        "subjectProgress"
+    );
+
+
+const subjectMessage =
+    document.getElementById(
+        "subjectMessage"
+    );
+
+
+const subjectModalTitle =
+    document.getElementById(
+        "subjectModalTitle"
+    );
+
+
+let editingSubjectId =
+    null;
+
+
+/* =========================================================
+   RESET SUBJECT MODAL
+   ========================================================= */
+
+function resetSubjectModal() {
+
+    editingSubjectId =
+        null;
+
+
+    if (subjectModalTitle) {
+
+        subjectModalTitle.textContent =
+            "Add Subject";
+
+    }
+
+
+    if (saveSubjectBtn) {
+
+        saveSubjectBtn.textContent =
+            "Save Subject";
+
+    }
+
+
+    if (subjectNameInput) {
+
+        subjectNameInput.value =
+            "";
+
+    }
+
+
+    if (subjectProgressInput) {
+
+        subjectProgressInput.value =
+            0;
+
+    }
+
+
+    if (subjectMessage) {
+
+        subjectMessage.textContent =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN ADD SUBJECT
+   ========================================================= */
+
+function openSubjectModalForAdd() {
+
+    resetSubjectModal();
+
+
+    if (subjectModal) {
+
+        subjectModal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    if (subjectNameInput) {
+
+        subjectNameInput.focus();
+
+    }
+
+}
+
+
+if (addSubjectBtn) {
+
+    addSubjectBtn.addEventListener(
+        "click",
+        openSubjectModalForAdd
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE SUBJECT MODAL
+   ========================================================= */
+
+function closeSubjectPopup() {
+
+    if (subjectModal) {
+
+        subjectModal.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    resetSubjectModal();
+
+}
+
+
+if (closeSubjectModalButton) {
+
+    closeSubjectModalButton.addEventListener(
+        "click",
+        closeSubjectPopup
+    );
+
+}
+
+
+if (cancelSubjectBtn) {
+
+    cancelSubjectBtn.addEventListener(
+        "click",
+        closeSubjectPopup
+    );
+
+}
+
+
+if (subjectModal) {
+
+    subjectModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                subjectModal
+            ) {
+
+                closeSubjectPopup();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EDIT SUBJECT
+   ========================================================= */
+
+function editSubject(id) {
+
+    const subject =
+        data.subjects.find(
+            item =>
+                String(
+                    item._id ||
+                    item.id
+                ) ===
+                String(id)
+        );
+
+
+    if (
+        !subject ||
+        !subjectModal
+    ) {
+
+        return;
+
+    }
+
+
+    editingSubjectId =
+        id;
+
+
+    if (subjectModalTitle) {
+
+        subjectModalTitle.textContent =
+            "Edit Subject";
+
+    }
+
+
+    if (saveSubjectBtn) {
+
+        saveSubjectBtn.textContent =
+            "Update Subject";
+
+    }
+
+
+    if (subjectNameInput) {
+
+        subjectNameInput.value =
+            subject.name || "";
+
+    }
+
+
+    if (subjectProgressInput) {
+
+        subjectProgressInput.value =
+            Number(
+                subject.progress
+            ) || 0;
+
+    }
+
+
+    if (subjectMessage) {
+
+        subjectMessage.textContent =
+            "";
+
+    }
+
+
+    subjectModal.classList.add(
+        "show"
+    );
+
+
+    if (subjectNameInput) {
+
+        subjectNameInput.focus();
+
+    }
+
+}
+
+
+window.editSubject =
+    editSubject;
+
+
+/* =========================================================
+   SAVE / UPDATE SUBJECT
+   ========================================================= */
+
+if (saveSubjectBtn) {
+
+    saveSubjectBtn.addEventListener(
+        "click",
+        async function () {
+
+            const name =
+                subjectNameInput
+                    ? subjectNameInput.value.trim()
+                    : "";
+
+
+            const progress =
+                subjectProgressInput
+                    ? Number(
+                        subjectProgressInput.value
+                    )
+                    : 0;
+
+
+            if (!name) {
+
+                if (subjectMessage) {
+
+                    subjectMessage.textContent =
+                        "Please enter a subject name.";
+
+                }
+
+                return;
+
+            }
+
+
+            if (
+                Number.isNaN(progress) ||
+                progress < 0 ||
+                progress > 100
+            ) {
+
+                if (subjectMessage) {
+
+                    subjectMessage.textContent =
+                        "Progress must be between 0 and 100.";
+
+                }
+
+                return;
+
+            }
+
+
+            const userId =
+                getUserId();
+
+
+            if (!userId) {
+
+                if (subjectMessage) {
+
+                    subjectMessage.textContent =
+                        "Please log in again.";
+
+                }
+
+                return;
+
+            }
+
+
+            const isEditing =
+                editingSubjectId !==
+                null;
+
+
+            saveSubjectBtn.disabled =
+                true;
+
+
+            saveSubjectBtn.textContent =
+                isEditing
+                    ? "Updating..."
+                    : "Saving...";
+
+
+            try {
+
+                const url =
+                    isEditing
+                        ? `${SUBJECT_API_URL}/${editingSubjectId}`
+                        : SUBJECT_API_URL;
+
+
+                const response =
+                    await fetch(
+                        url,
+                        {
+                            method:
+                                isEditing
+                                    ? "PUT"
+                                    : "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "user-id":
+                                    userId
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    name:
+                                        name,
+
+                                    progress:
+                                        progress
+
+                                })
+
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        result.message ||
+                        "Could not save subject"
+                    );
+
+                }
+
+
+                if (isEditing) {
+
+                    const index =
+                        data.subjects.findIndex(
+                            item =>
+                                String(
+                                    item._id ||
+                                    item.id
+                                ) ===
+                                String(
+                                    editingSubjectId
+                                )
+                        );
+
+
+                    if (index !== -1) {
+
+                        data.subjects[index] =
+                            result.subject;
+
+                    }
+
+                } else {
+
+                    data.subjects.push(
+                        result.subject
+                    );
+
+                }
+
+
+                populateSubjectDropdown();
+
+                renderSubjects();
+
+                renderProgress();
+
+
+                closeSubjectPopup();
+
+
+                if (isEditing) {
+
+                    showPaperNestMessage(
+                        `Subject "${result.subject.name}" updated successfully!`
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Subject save error:",
+                    error
+                );
+
+
+                if (subjectMessage) {
+
+                    subjectMessage.textContent =
+                        error.message ||
+                        "Could not save subject.";
+
+                }
+
+            } finally {
+
+                saveSubjectBtn.disabled =
+                    false;
+
+
+                saveSubjectBtn.textContent =
+                    isEditing
+                        ? "Update Subject"
+                        : "Save Subject";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ADD SUBJECT FUNCTION
+   ========================================================= */
+
+async function addSubject(
+    name,
+    progress = 0
+) {
+
+    const userId =
+        getUserId();
+
+
+    if (!userId) {
+
+        showPaperNestMessage(
+            "Please log in again.",
+            "Login required"
+        );
+
+        return false;
+
+    }
+
 
     try {
-
-        const userId = getUserId();
-
-        if (!userId) {
-
-            alert(
-                "Please log in again."
-            );
-
-            return false;
-        }
-
 
         const response =
             await fetch(
                 SUBJECT_API_URL,
                 {
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
                         "user-id":
                             userId
+
                     },
 
                     body:
                         JSON.stringify({
-                            name: name.trim(),
-                            progress: Number(progress) || 0
+
+                            name:
+                                name.trim(),
+
+                            progress:
+                                Number(
+                                    progress
+                                ) || 0
+
                         })
+
                 }
             );
 
@@ -2283,23 +3829,19 @@ async function addSubject(name, progress = 0) {
         }
 
 
-        console.log(
-            "Subject added:",
-            result.subject
-        );
-
-
         data.subjects.push(
             result.subject
         );
 
 
+        populateSubjectDropdown();
+
         renderSubjects();
+
         renderProgress();
 
 
         return true;
-
 
     } catch (error) {
 
@@ -2309,21 +3851,27 @@ async function addSubject(name, progress = 0) {
         );
 
 
-        alert(
+        showPaperNestMessage(
             error.message ||
-            "Subject could not be added."
+            "Subject could not be added.",
+            "Could not add subject"
         );
 
 
         return false;
+
     }
 
 }
 
 
-/* ---------------------------------------------------------
+window.addSubject =
+    addSubject;
+
+
+/* =========================================================
    DELETE SUBJECT
-   --------------------------------------------------------- */
+   ========================================================= */
 
 async function deleteSubject(id) {
 
@@ -2333,111 +3881,130 @@ async function deleteSubject(id) {
                 String(
                     item._id ||
                     item.id
-                ) === String(id)
+                ) ===
+                String(id)
         );
 
 
     if (!subject) {
+
         return;
+
     }
 
 
-    const confirmed =
-        confirm(
-            `Are you sure you want to delete "${subject.name}"?`
-        );
+    showPaperNestConfirm(
+
+        `Delete "${subject.name}"?`,
+
+        "This subject and its progress will be removed.",
+
+        async function () {
+
+            const userId =
+                getUserId();
 
 
-    if (!confirmed) {
-        return;
-    }
+            if (!userId) {
+
+                showPaperNestMessage(
+                    "Please log in again.",
+                    "Login required"
+                );
+
+                return;
+
+            }
 
 
-    try {
+            try {
 
-        const userId = getUserId();
+                const response =
+                    await fetch(
+                        `${SUBJECT_API_URL}/${id}`,
+                        {
+                            method:
+                                "DELETE",
 
-        if (!userId) {
+                            headers: {
 
-            alert(
-                "Please log in again."
-            );
+                                "user-id":
+                                    userId
 
-            return;
-        }
+                            }
+
+                        }
+                    );
 
 
-        const response =
-            await fetch(
-                `${SUBJECT_API_URL}/${id}`,
-                {
-                    method: "DELETE",
+                const result =
+                    await response.json();
 
-                    headers: {
-                        "user-id":
-                            userId
-                    }
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        result.message ||
+                        "Failed to delete subject"
+                    );
+
                 }
-            );
 
 
-        const result =
-            await response.json();
+                data.subjects =
+                    data.subjects.filter(
+                        item =>
+                            String(
+                                item._id ||
+                                item.id
+                            ) !==
+                            String(id)
+                    );
 
 
-        if (!response.ok) {
+                populateSubjectDropdown();
 
-            throw new Error(
-                result.message ||
-                "Failed to delete subject"
-            );
+                renderSubjects();
 
-        }
+                renderProgress();
 
 
-        data.subjects =
-            data.subjects.filter(
-                item =>
-                    String(
-                        item._id ||
-                        item.id
-                    ) !== String(id)
-            );
+                showPaperNestMessage(
+                    `Subject "${subject.name}" deleted successfully!`
+                );
 
 
-        renderSubjects();
-        renderProgress();
+            } catch (error) {
+
+                console.error(
+                    "Error deleting subject:",
+                    error
+                );
 
 
-        console.log(
-            "Subject deleted successfully."
-        );
+                showPaperNestMessage(
+                    error.message ||
+                    "Subject could not be deleted.",
+                    "Delete failed"
+                );
 
+            }
 
-    } catch (error) {
+        },
 
-        console.error(
-            "Error deleting subject:",
-            error
-        );
+        "🗑"
 
-
-        alert(
-            "Subject could not be deleted."
-        );
-    }
+    );
 
 }
 
 
-window.addSubject =
-    addSubject;
-
 window.deleteSubject =
     deleteSubject;
 
+
 /* =========================================================
-   PROGRESS
+   PROGRESS PAGE
    ========================================================= */
 
 function renderProgress() {
@@ -2457,8 +4024,10 @@ function renderProgress() {
         total === 0
             ? 0
             : Math.round(
-                (completed /
-                    total) *
+                (
+                    completed /
+                    total
+                ) *
                 100
             );
 
@@ -2512,47 +4081,74 @@ function renderProgress() {
 
 
     if (!subjectProgress) {
+
         return;
+
+    }
+
+
+    if (
+        data.subjects.length ===
+        0
+    ) {
+
+        subjectProgress.innerHTML =
+            emptyMessage(
+                "No subjects added yet."
+            );
+
+        return;
+
     }
 
 
     subjectProgress.innerHTML =
         data.subjects
             .map(
-                subject => `
+                subject => {
 
-                    <div
-                        class="subject-progress-row"
-                    >
+                    const progress =
+                        Number(
+                            subject.progress
+                        ) || 0;
 
-                        <strong>
-                            ${escapeHTML(
-                                subject.name
-                            )}
-                        </strong>
 
+                    return `
 
                         <div
-                            class="progress-bar"
+                            class="subject-progress-row"
                         >
 
-                            <span
-                                style="
-                                    width:
-                                    ${subject.progress}%;
-                                "
-                            ></span>
+                            <strong>
+                                ${escapeHTML(
+                                    subject.name
+                                )}
+                            </strong>
+
+
+                            <div
+                                class="progress-bar"
+                            >
+
+                                <span
+                                    style="
+                                        width:
+                                        ${progress}%;
+                                    "
+                                ></span>
+
+                            </div>
+
+
+                            <span>
+                                ${progress}%
+                            </span>
 
                         </div>
 
+                    `;
 
-                        <span>
-                            ${subject.progress}%
-                        </span>
-
-                    </div>
-
-                `
+                }
             )
             .join("");
 
@@ -2574,6 +4170,7 @@ function renderCalendar() {
             "calendar"
         );
 
+
     const monthTitle =
         getElement(
             "monthTitle"
@@ -2581,7 +4178,9 @@ function renderCalendar() {
 
 
     if (!calendar) {
+
         return;
+
     }
 
 
@@ -2619,18 +4218,19 @@ function renderCalendar() {
             ).toLocaleDateString(
                 "en-US",
                 {
-                    month: "long",
-                    year: "numeric"
+                    month:
+                        "long",
+
+                    year:
+                        "numeric"
                 }
             );
 
     }
 
 
-    let html = "";
-
-
     const weekdays = [
+
         "Sun",
         "Mon",
         "Tue",
@@ -2638,7 +4238,12 @@ function renderCalendar() {
         "Thu",
         "Fri",
         "Sat"
+
     ];
+
+
+    let html =
+        "";
 
 
     weekdays.forEach(
@@ -2680,9 +4285,15 @@ function renderCalendar() {
     ) {
 
         const isToday =
-            day === today.getDate() &&
-            month === today.getMonth() &&
-            year === today.getFullYear();
+
+            day ===
+                today.getDate() &&
+
+            month ===
+                today.getMonth() &&
+
+            year ===
+                today.getFullYear();
 
 
         html += `
@@ -2726,8 +4337,10 @@ if (previousMonth) {
         function () {
 
             calendarDate.setMonth(
-                calendarDate.getMonth() - 1
+                calendarDate.getMonth() -
+                1
             );
+
 
             renderCalendar();
 
@@ -2754,8 +4367,10 @@ if (nextMonth) {
         function () {
 
             calendarDate.setMonth(
-                calendarDate.getMonth() + 1
+                calendarDate.getMonth() +
+                1
             );
+
 
             renderCalendar();
 
@@ -2774,6 +4389,7 @@ const profileButton =
         "profileButton"
     );
 
+
 const profilePanel =
     getElement(
         "profilePanel"
@@ -2790,6 +4406,7 @@ if (
         function (event) {
 
             event.stopPropagation();
+
 
             profilePanel.classList.toggle(
                 "show"
@@ -2838,40 +4455,114 @@ if (logoutButton) {
 
     logoutButton.addEventListener(
         "click",
-        async function () {
+        function () {
 
-            const confirmed = await showConfirmation({
-    title: "Log out?",
-    message: "Are you sure you want to log out of The Paper Nest?",
-    icon: "↪️",
-    confirmText: "Log out"
-});
+            showPaperNestConfirm(
 
-if (!confirmed) {
-    return;
-}
+                "Log out of The Paper Nest?",
+
+                "You will need to sign in again to access your planner.",
+
+                async function () {
+
+                    localStorage.removeItem(
+                        "paperNestToken"
+                    );
 
 
-            /*
-               Remove login information.
-            */
+                    localStorage.removeItem(
+                        "paperNestUser"
+                    );
 
-            localStorage.removeItem(
-                "paperNestToken"
+
+                    window.location.href =
+                        "/login";
+
+                },
+
+                "↪"
+
             );
-
-            localStorage.removeItem(
-                "paperNestUser"
-            );
-
-
-            window.location.href =
-                "/login";
 
         }
     );
 
 }
+
+
+/* =========================================================
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+const notificationButton =
+    document.querySelector(
+        ".notification-btn"
+    );
+
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
+        "click",
+        function () {
+
+            const pending =
+                data.tasks.filter(
+                    task =>
+                        !task.completed
+                ).length;
+
+
+            if (
+                pending === 0
+            ) {
+
+                showPaperNestMessage(
+                    "You have no pending tasks. Your nest is clear! 🌿",
+                    "All caught up"
+                );
+
+            } else {
+
+                showPaperNestMessage(
+
+                    `You have ${pending} pending task${
+                        pending === 1
+                            ? ""
+                            : "s"
+                    } in your planner.`,
+
+                    "A little reminder"
+
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KEYBOARD SUPPORT FOR POPUPS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closePaperNestPopup();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -2881,261 +4572,7 @@ if (!confirmed) {
 console.log(
     "The Paper Nest dashboard.js loaded successfully."
 );
-/* =========================================================
-   ADD SUBJECT MODAL
-   ========================================================= */
 
-const addSubjectBtn = document.getElementById("addSubjectBtn");
-const subjectModal = document.getElementById("subjectModal");
-const closeSubjectModal = document.getElementById("closeSubjectModal");
-const cancelSubjectBtn = document.getElementById("cancelSubjectBtn");
-const saveSubjectBtn = document.getElementById("saveSubjectBtn");
-
-const subjectName = document.getElementById("subjectName");
-const subjectProgress = document.getElementById("subjectProgress");
-const subjectMessage = document.getElementById("subjectMessage");
-
-
-/* OPEN ADD SUBJECT MODAL */
-
-if (addSubjectBtn) {
-    addSubjectBtn.addEventListener("click", function () {
-
-        subjectModal.classList.add("show");
-
-        subjectName.value = "";
-        subjectProgress.value = 0;
-        subjectMessage.textContent = "";
-
-        subjectName.focus();
-    });
-}
-
-
-/* CLOSE MODAL */
-
-function closeSubjectPopup() {
-
-    if (subjectModal) {
-        subjectModal.classList.remove("show");
-    }
-
-}
-
-
-if (closeSubjectModal) {
-    closeSubjectModal.addEventListener(
-        "click",
-        closeSubjectPopup
-    );
-}
-
-
-if (cancelSubjectBtn) {
-    cancelSubjectBtn.addEventListener(
-        "click",
-        closeSubjectPopup
-    );
-}
-
-
-/* SAVE SUBJECT */
-
-if (saveSubjectBtn) {
-
-    saveSubjectBtn.addEventListener("click", async function () {
-
-        const name = subjectName.value.trim();
-        const progress = Number(subjectProgress.value) || 0;
-
-        if (!name) {
-
-            subjectMessage.textContent =
-                "Please enter a subject name.";
-
-            return;
-        }
-
-        if (progress < 0 || progress > 100) {
-
-            subjectMessage.textContent =
-                "Progress must be between 0 and 100.";
-
-            return;
-        }
-
-
-        const savedUser =
-            localStorage.getItem("paperNestUser");
-
-
-        if (!savedUser) {
-
-            subjectMessage.textContent =
-                "Please log in again.";
-
-            return;
-        }
-
-
-        let user;
-
-        try {
-
-            user = JSON.parse(savedUser);
-
-        } catch (error) {
-
-            subjectMessage.textContent =
-                "User information is invalid.";
-
-            return;
-        }
-
-
-        const userId =
-            user._id ||
-            user.id ||
-            user.userId;
-
-
-        if (!userId) {
-
-            subjectMessage.textContent =
-                "User ID not found. Please log in again.";
-
-            return;
-        }
-
-
-        saveSubjectBtn.disabled = true;
-        saveSubjectBtn.textContent = "Saving...";
-
-
-        try {
-
-            const response = await fetch(
-                "/api/subjects",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json",
-                        "user-id": userId
-                    },
-
-                    body: JSON.stringify({
-                        name: name,
-                        progress: progress
-                    })
-                }
-            );
-
-
-            const result = await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    result.message ||
-                    "Failed to add subject"
-                );
-
-            }
-
-
-            /* ADD NEW SUBJECT TO THE DASHBOARD */
-
-            if (!Array.isArray(data.subjects)) {
-                data.subjects = [];
-            }
-
-            data.subjects.push(result.subject);
-
-
-            /* DISPLAY IT IMMEDIATELY */
-
-            renderSubjects();
-            renderProgress();
-
-
-            /* CLOSE MODAL */
-
-            closeSubjectPopup();
-
-
-            console.log(
-                "Subject added successfully:",
-                result.subject
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Add subject error:",
-                error
-            );
-
-            subjectMessage.textContent =
-                error.message ||
-                "Failed to add subject.";
-
-        }
-
-
-        saveSubjectBtn.disabled = false;
-        saveSubjectBtn.textContent = "Save Subject";
-
-    });
-
-}
-
-
-/* CLOSE MODAL WHEN CLICKING OUTSIDE */
-
-if (subjectModal) {
-
-    subjectModal.addEventListener("click", function (event) {
-
-        if (event.target === subjectModal) {
-            closeSubjectPopup();
-        }
-
-    });
-
-}
-function populateSubjectDropdown() {
-
-    const dropdown = document.getElementById("taskSubject");
-
-    if (!dropdown) {
-        return;
-    }
-
-    dropdown.innerHTML = "";
-
-    const general = document.createElement("option");
-    general.value = "General";
-    general.textContent = "General";
-    dropdown.appendChild(general);
-
-    if (Array.isArray(data.subjects)) {
-
-        data.subjects.forEach(subject => {
-
-            const option = document.createElement("option");
-
-            option.value = subject.name;
-            option.textContent = subject.name;
-
-            dropdown.appendChild(option);
-
-        });
-
-    }
-}
 
 if (checkLogin()) {
 
@@ -3148,191 +4585,6 @@ if (checkLogin()) {
     renderSubjects();
 
     renderProgress();
-    /* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
-
-const notificationButton =
-    document.getElementById("notificationButton");
-
-
-function showNotifications() {
-
-    const existing =
-        document.getElementById("notificationPopup");
-
-    /* Close popup if already open */
-    if (existing) {
-        existing.remove();
-        return;
-    }
-
-    const popup =
-        document.createElement("div");
-
-    popup.id = "notificationPopup";
-
-    popup.style.position = "fixed";
-    popup.style.top = "75px";
-    popup.style.right = "30px";
-    popup.style.width = "320px";
-    popup.style.background = "#fffaf2";
-    popup.style.border = "1px solid #dccbb8";
-    popup.style.borderRadius = "16px";
-    popup.style.padding = "20px";
-    popup.style.boxShadow =
-        "0 12px 35px rgba(70, 45, 30, 0.18)";
-    popup.style.zIndex = "9999";
-    popup.style.color = "#603b25";
-
-
-    /* Heading */
-
-    const heading =
-        document.createElement("h3");
-
-    heading.textContent =
-        "Your Notifications";
-
-    heading.style.margin =
-        "0 0 15px 0";
-
-    heading.style.fontFamily =
-        "Cormorant Garamond, serif";
-
-    heading.style.fontSize =
-        "24px";
-
-
-    popup.appendChild(heading);
-
-
-    /* Get pending tasks */
-
-    const pendingTasks =
-        data.tasks.filter(
-            task => !task.completed
-        );
-
-
-    if (pendingTasks.length === 0) {
-
-        const empty =
-            document.createElement("p");
-
-        empty.textContent =
-            "You're all caught up! 🌿";
-
-        empty.style.margin = "0";
-        empty.style.color = "#927a65";
-
-        popup.appendChild(empty);
-
-    } else {
-
-        pendingTasks.forEach(task => {
-
-            const notification =
-                document.createElement("div");
-
-            notification.style.padding =
-                "12px 0";
-
-            notification.style.borderBottom =
-                "1px solid #eadfd2";
-
-
-            const title =
-                document.createElement("strong");
-
-            title.textContent =
-                task.title;
-
-            title.style.display =
-                "block";
-
-
-            const details =
-                document.createElement("small");
-
-            let text = "Pending";
-
-            if (task.time) {
-                text += " • " + task.time;
-            }
-
-            if (task.subject) {
-                text += " • " + task.subject;
-            }
-
-            details.textContent = text;
-
-            details.style.color =
-                "#927a65";
-
-
-            notification.appendChild(title);
-            notification.appendChild(details);
-
-            popup.appendChild(notification);
-
-        });
-
-    }
-
-
-    document.body.appendChild(popup);
-
-
-    /* Close when clicking outside */
-
-    setTimeout(() => {
-
-        document.addEventListener(
-            "click",
-            closeNotificationOutside
-        );
-
-    }, 0);
-
-
-    function closeNotificationOutside(event) {
-
-        if (
-            !popup.contains(event.target) &&
-            event.target !== notificationButton
-        ) {
-
-            popup.remove();
-
-            document.removeEventListener(
-                "click",
-                closeNotificationOutside
-            );
-
-        }
-
-    }
-
-}
-
-
-/* Notification button click */
-
-if (notificationButton) {
-
-    notificationButton.addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            showNotifications();
-
-        }
-    );
-
-}
 
     renderCalendar();
 
@@ -3342,10 +4594,4 @@ if (notificationButton) {
 
     loadSubjects();
 
-
-    
-
 }
-/*
-   Check login first.
-*/
