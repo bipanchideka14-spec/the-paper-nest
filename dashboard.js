@@ -2838,7 +2838,7 @@ if (logoutButton) {
 
     logoutButton.addEventListener(
         "click",
-        function () {
+        async function () {
 
             const confirmed = await showConfirmation({
     title: "Log out?",
