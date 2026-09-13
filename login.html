@@ -26,6 +26,7 @@
 
 </head>
 
+
 <body class="login-body">
 
 
@@ -529,7 +530,54 @@
 
 </script>
 
-    
+ <script>
+const forgotPasswordLink = document.getElementById("forgotPassword");
+
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        const email = prompt("Enter your registered email address:");
+
+        if (!email) return;
+
+        const newPassword = prompt("Enter your new password:");
+
+        if (!newPassword) return;
+
+        if (newPassword.length < 6) {
+            alert("Password must be at least 6 characters.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email.trim(),
+                    newPassword: newPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message || "Could not reset password.");
+                return;
+            }
+
+            alert("Password reset successfully! You can now log in.");
+
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            alert("Could not connect to the server.");
+        }
+    });
+}
+</script>   
 
 </body>
 </html>
