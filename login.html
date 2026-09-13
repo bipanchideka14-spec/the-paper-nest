@@ -276,9 +276,14 @@
                         </label>
 
 
-                        <a href="/forgot-password" id="forgotPasswordLink">
-    Forgot password?
-</a>
+                        <!-- FIXED FORGOT PASSWORD LINK -->
+
+                        <a
+                            href="#"
+                            id="forgotPasswordLink"
+                        >
+                            Forgot password?
+                        </a>
 
                     </div>
 
@@ -331,117 +336,75 @@
     </main>
 
 
+
+    <!-- ==========================================
+         SHOW / HIDE PASSWORD
+         ========================================== -->
+
     <script>
 
-    /* ==========================================
-       SHOW / HIDE PASSWORD
-       ========================================== */
+        const password =
+            document.getElementById("password");
 
-    const password =
-        document.getElementById("password");
-
-    const showPassword =
-        document.getElementById("showPassword");
-
-    showPassword.addEventListener("click", () => {
-
-        if (password.type === "password") {
-
-            password.type = "text";
-            showPassword.textContent = "Hide";
-
-        } else {
-
-            password.type = "password";
-            showPassword.textContent = "Show";
-
-        }
-
-    });
+        const showPassword =
+            document.getElementById("showPassword");
 
 
-    /* ==========================================
-       LOGIN
-       ========================================== */
+        showPassword.addEventListener("click", () => {
 
-    const loginForm =
-        document.getElementById("loginForm");
+            if (password.type === "password") {
 
-    const loginMessage =
-        document.getElementById("loginMessage");
+                password.type = "text";
 
+                showPassword.textContent = "Hide";
 
-    loginForm.addEventListener("submit", async (event) => {
+            } else {
 
-        event.preventDefault();
+                password.type = "password";
 
+                showPassword.textContent = "Show";
 
-        const email =
-            document
-                .getElementById("email")
-                .value
-                .trim();
+            }
 
-        const passwordValue =
-            password.value.trim();
+        });
+
+    </script>
 
 
-        if (!email || !passwordValue) {
 
-            loginMessage.textContent =
-                "Please enter your email and password.";
+    <!-- ==========================================
+         LOGIN
+         ========================================== -->
 
-            loginMessage.className =
-                "login-message error";
+    <script>
 
-            return;
+        const loginForm =
+            document.getElementById("loginForm");
 
-        }
-
-
-        /* Show loading message */
-
-        loginMessage.textContent =
-            "Signing you in...";
-
-        loginMessage.className =
-            "login-message";
+        const loginMessage =
+            document.getElementById("loginMessage");
 
 
-        try {
+        loginForm.addEventListener("submit", async (event) => {
 
-            /* Send login details to backend */
-
-            const response = await
-                fetch("/api/auth/login", 
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        email: email,
-                        password: passwordValue
-                    })
-                }
-            );
+            event.preventDefault();
 
 
-            const data =
-                await response.json();
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
 
-            /* ==================================
-               LOGIN FAILED
-               ================================== */
+            const passwordValue =
+                password.value.trim();
 
-            if (!response.ok) {
+
+            if (!email || !passwordValue) {
 
                 loginMessage.textContent =
-                    data.message ||
-                    "Invalid email or password.";
+                    "Please enter your email and password.";
 
                 loginMessage.className =
                     "login-message error";
@@ -451,133 +414,282 @@
             }
 
 
-            /* ==================================
-               LOGIN SUCCESSFUL
-               ================================== */
+            /* Show loading message */
 
             loginMessage.textContent =
-                data.message ||
-                "Login successful!";
+                "Signing you in...";
 
             loginMessage.className =
-                "login-message success";
+                "login-message";
 
 
-            /* Save JWT token */
+            try {
 
-            if (data.token) {
+                /* Send login details to backend */
 
-                localStorage.setItem(
-                    "paperNestToken",
-                    data.token
+                const response = await
+                    fetch("/api/auth/login", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            email: email,
+
+                            password: passwordValue
+
+                        })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                /* ==================================
+                   LOGIN FAILED
+                   ================================== */
+
+                if (!response.ok) {
+
+                    loginMessage.textContent =
+                        data.message ||
+                        "Invalid email or password.";
+
+                    loginMessage.className =
+                        "login-message error";
+
+                    return;
+
+                }
+
+
+                /* ==================================
+                   LOGIN SUCCESSFUL
+                   ================================== */
+
+                loginMessage.textContent =
+                    data.message ||
+                    "Login successful!";
+
+                loginMessage.className =
+                    "login-message success";
+
+
+                /* Save JWT token */
+
+                if (data.token) {
+
+                    localStorage.setItem(
+                        "paperNestToken",
+                        data.token
+                    );
+
+                }
+
+
+                /* Save user information */
+
+                if (data.user) {
+
+                    localStorage.setItem(
+                        "paperNestUser",
+                        JSON.stringify(data.user)
+                    );
+
+                }
+
+
+                /* Open dashboard */
+
+                setTimeout(() => {
+
+                    window.location.replace("/dashboard");
+
+                }, 700);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
                 );
 
-            }
+                loginMessage.textContent =
+                    "Could not connect to the server.";
 
-
-            /* Save user information */
-
-            if (data.user) {
-
-                localStorage.setItem(
-                    "paperNestUser",
-                    JSON.stringify(data.user)
-                );
+                loginMessage.className =
+                    "login-message error";
 
             }
-
-
-            /* Open dashboard */
-
-            setTimeout(() => {
-
-                window.location.replace("/dashboard");
-            }, 700);
-
-
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-            loginMessage.textContent =
-                "Could not connect to the server.";
-
-            loginMessage.className =
-                "login-message error";
-
-        }
-
-    });
-
-
-    /* ==========================================
-       SIGN UP BUTTON
-       ========================================== */
-
-    document
-        .getElementById("signupLink")
-        .addEventListener("click", (event) => {
-
-            event.preventDefault();
-
-            window.location.href =
-                "signup.html";
 
         });
 
-</script>
+    </script>
 
- <script>
-const forgotPasswordLink = document.getElementById("forgotPassword");
 
-if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener("click", async function (event) {
-        event.preventDefault();
 
-        const email = prompt("Enter your registered email address:");
+    <!-- ==========================================
+         SIGN UP BUTTON
+         ========================================== -->
 
-        if (!email) return;
+    <script>
 
-        const newPassword = prompt("Enter your new password:");
+        document
+            .getElementById("signupLink")
+            .addEventListener("click", (event) => {
 
-        if (!newPassword) return;
+                event.preventDefault();
 
-        if (newPassword.length < 6) {
-            alert("Password must be at least 6 characters.");
-            return;
-        }
+                window.location.href =
+                    "signup.html";
 
-        try {
-            const response = await fetch("/api/auth/forgot-password", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email.trim(),
-                    newPassword: newPassword
-                })
             });
 
-            const data = await response.json();
+    </script>
 
-            if (!response.ok) {
-                alert(data.message || "Could not reset password.");
+
+
+    <!-- ==========================================
+         FORGOT PASSWORD
+         ========================================== -->
+
+    <script>
+
+        /*
+         * IMPORTANT:
+         * The HTML link uses id="forgotPasswordLink"
+         * so JavaScript MUST use the same ID.
+         */
+
+        const forgotPasswordLink =
+            document.getElementById("forgotPasswordLink");
+
+
+        forgotPasswordLink.addEventListener("click", async (event) => {
+
+            event.preventDefault();
+
+
+            /* Ask for registered email */
+
+            const email =
+                prompt(
+                    "Enter your registered email address:"
+                );
+
+
+            if (!email) {
                 return;
             }
 
-            alert("Password reset successfully! You can now log in.");
 
-        } catch (error) {
-            console.error("Forgot password error:", error);
-            alert("Could not connect to the server.");
-        }
-    });
-}
-</script>   
+            /* Ask for new password */
+
+            const newPassword =
+                prompt(
+                    "Enter your new password:"
+                );
+
+
+            if (!newPassword) {
+                return;
+            }
+
+
+            /* Check password length */
+
+            if (newPassword.length < 6) {
+
+                alert(
+                    "Password must be at least 6 characters."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                /* Send password reset request */
+
+                const response =
+                    await fetch(
+                        "/api/auth/forgot-password",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body: JSON.stringify({
+
+                                email:
+                                    email.trim(),
+
+                                newPassword:
+                                    newPassword
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                /* Reset failed */
+
+                if (!response.ok) {
+
+                    alert(
+                        data.message ||
+                        "Could not reset password."
+                    );
+
+                    return;
+
+                }
+
+
+                /* Reset successful */
+
+                alert(
+                    "Password reset successfully! You can now log in."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Forgot password error:",
+                    error
+                );
+
+                alert(
+                    "Could not connect to the server."
+                );
+
+            }
+
+        });
+
+    </script>
+
 
 </body>
 </html>
