@@ -1,25 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - The Paper Nest</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Forgot Password | The Paper Nest</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Patrick+Hand&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f7f0e5;
+            font-family: "DM Sans", sans-serif;
+            color: #5a3824;
+        }
+
+        .forgot-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .forgot-card {
+            width: 100%;
+            max-width: 480px;
+            background: #fffaf2;
+            border-radius: 22px;
+            padding: 50px 45px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 45px rgba(90, 56, 36, 0.12);
+        }
+
+        .forgot-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .forgot-logo img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+
+        .tiny-label {
+            display: block;
+            text-align: center;
+            letter-spacing: 2px;
+            font-size: 12px;
+            color: #747d5c;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 52px;
+            line-height: 1;
+            text-align: center;
+            margin: 0 0 12px;
+            color: #5a3824;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #80624d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #5a3824;
+        }
+
+        .input-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 16px 18px;
+            border: 1px solid #dfcdb9;
+            border-radius: 14px;
+            background: #fffdf9;
+            font-size: 14px;
+            color: #5a3824;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #747d5c;
+            box-shadow: 0 0 0 3px rgba(116, 125, 92, 0.12);
+        }
+
+        .reset-button {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 17px;
+            background: #5a3824;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+
+        .reset-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .reset-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-message {
+            min-height: 22px;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .reset-message.error {
+            color: #a25b49;
+        }
+
+        .reset-message.success {
+            color: #747d5c;
+        }
+
+        .back-login {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 13px;
+            color: #80624d;
+        }
+
+        .back-login a {
+            color: #747d5c;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-login a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 550px) {
+
+            .forgot-page {
+                padding: 15px;
+            }
+
+            .forgot-card {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 44px;
+            }
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-    <h1>Forgot Password</h1>
+    <main class="forgot-page">
 
-    <p>Enter your registered email address.</p>
+        <section class="forgot-card">
 
-    <form>
-        <input
-            type="email"
-            placeholder="Enter your email"
-            required
-        >
+            <div class="forgot-logo">
+                <img
+                    src="logo.png"
+                    alt="The Paper Nest logo"
+                >
+            </div>
 
-        <button type="submit">Reset Password</button>
-    </form>
+            <span class="tiny-label">
+                THE PAPER NEST
+            </span>
+
+            <h1>
+                Reset your password.
+            </h1>
+
+            <p class="subtitle">
+                No worries. Enter your email and choose a new password.
+            </p>
+
+
+            <form id="forgotPasswordForm">
+
+                <div class="input-group">
+
+                    <label for="email">
+                        Email address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="newPassword">
+                        New password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="newPassword"
+                        placeholder="Create a new password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="confirmPassword">
+                        Confirm new password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm your new password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="reset-button"
+                    id="resetButton"
+                >
+                    Reset password →
+                </button>
+
+                <div
+                    class="reset-message"
+                    id="resetMessage"
+                ></div>
+
+            </form>
+
+
+            <div class="back-login">
+
+                Remember your password?
+
+                <a href="/login">
+                    Sign in
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        const form =
+            document.getElementById("forgotPasswordForm");
+
+        const message =
+            document.getElementById("resetMessage");
+
+        const button =
+            document.getElementById("resetButton");
+
+
+        form.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("email")
+                    .value
+                    .trim();
+
+            const newPassword =
+                document.getElementById("newPassword")
+                    .value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword")
+                    .value;
+
+
+            message.textContent = "";
+            message.className = "reset-message";
+
+
+            if (newPassword !== confirmPassword) {
+
+                message.textContent =
+                    "Passwords do not match.";
+
+                message.className =
+                    "reset-message error";
+
+                return;
+            }
+
+
+            if (newPassword.length < 6) {
+
+                message.textContent =
+                    "Password must be at least 6 characters.";
+
+                message.className =
+                    "reset-message error";
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Resetting password...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/auth/forgot-password",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                newPassword: newPassword
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    message.textContent =
+                        data.message ||
+                        "Could not reset password.";
+
+                    message.className =
+                        "reset-message error";
+
+                    return;
+                }
+
+
+                message.textContent =
+                    "Password reset successfully!";
+
+                message.className =
+                    "reset-message success";
+
+
+                form.reset();
+
+
+                setTimeout(() => {
+
+                    window.location.replace("/login");
+
+                }, 1200);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Password reset error:",
+                    error
+                );
+
+                message.textContent =
+                    "Could not connect to the server.";
+
+                message.className =
+                    "reset-message error";
+
+            } finally {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Reset password →";
+            }
+
+        });
+
+    </script>
 
 </body>
+
 </html>

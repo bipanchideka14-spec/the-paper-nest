@@ -12,9 +12,10 @@ if (!JWT_SECRET) {
     console.error("JWT_SECRET is missing from environment variables.");
 }
 
-// ============================
+// =========================================================
 // SIGN UP
-// ============================
+// =========================================================
+
 router.post("/signup", async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -82,9 +83,10 @@ router.post("/signup", async (req, res) => {
 });
 
 
-// ============================
+// =========================================================
 // LOGIN
-// ============================
+// =========================================================
+
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -149,12 +151,68 @@ router.post("/login", async (req, res) => {
 });
 
 
-// ============================
+// =========================================================
+// FORGOT PASSWORD
+// =========================================================
+
+router.post("/forgot-password", async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        if (!email || !newPassword) {
+            return res.status(400).json({
+                message: "Email and new password are required"
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                message: "New password must be at least 6 characters"
+            });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        const user = await User.findOne({
+            email: cleanEmail
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "No account found with this email"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(
+            newPassword,
+            10
+        );
+
+        user.password = hashedPassword;
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Password reset successfully"
+        });
+
+    } catch (error) {
+        console.error("Forgot password error:", error);
+
+        res.status(500).json({
+            message: "Could not reset password"
+        });
+    }
+});
+
+
+// =========================================================
 // GET LOGGED-IN USER
-// ============================
+// =========================================================
+
 router.get("/me", async (req, res) => {
     try {
-
         const authHeader = req.headers.authorization;
 
         if (!authHeader) {
@@ -195,7 +253,6 @@ router.get("/me", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Authentication error:", error);
 
         res.status(401).json({

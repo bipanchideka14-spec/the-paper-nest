@@ -51,7 +51,11 @@ app.get("/signup", (req, res) => {
         path.join(__dirname, "..", "signup.html")
     );
 });
-
+app.get("/forgot-password", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "..", "forgot-password.html")
+    );
+});
 app.get("/dashboard", (req, res) => {
     res.sendFile(
         path.join(__dirname, "..", "dashboard.html")
