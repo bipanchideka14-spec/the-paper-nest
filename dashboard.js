@@ -3024,6 +3024,191 @@ if (checkLogin()) {
     renderSubjects();
 
     renderProgress();
+    /* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
+
+const notificationButton =
+    document.getElementById("notificationButton");
+
+
+function showNotifications() {
+
+    const existing =
+        document.getElementById("notificationPopup");
+
+    /* Close popup if already open */
+    if (existing) {
+        existing.remove();
+        return;
+    }
+
+    const popup =
+        document.createElement("div");
+
+    popup.id = "notificationPopup";
+
+    popup.style.position = "fixed";
+    popup.style.top = "75px";
+    popup.style.right = "30px";
+    popup.style.width = "320px";
+    popup.style.background = "#fffaf2";
+    popup.style.border = "1px solid #dccbb8";
+    popup.style.borderRadius = "16px";
+    popup.style.padding = "20px";
+    popup.style.boxShadow =
+        "0 12px 35px rgba(70, 45, 30, 0.18)";
+    popup.style.zIndex = "9999";
+    popup.style.color = "#603b25";
+
+
+    /* Heading */
+
+    const heading =
+        document.createElement("h3");
+
+    heading.textContent =
+        "Your Notifications";
+
+    heading.style.margin =
+        "0 0 15px 0";
+
+    heading.style.fontFamily =
+        "Cormorant Garamond, serif";
+
+    heading.style.fontSize =
+        "24px";
+
+
+    popup.appendChild(heading);
+
+
+    /* Get pending tasks */
+
+    const pendingTasks =
+        data.tasks.filter(
+            task => !task.completed
+        );
+
+
+    if (pendingTasks.length === 0) {
+
+        const empty =
+            document.createElement("p");
+
+        empty.textContent =
+            "You're all caught up! 🌿";
+
+        empty.style.margin = "0";
+        empty.style.color = "#927a65";
+
+        popup.appendChild(empty);
+
+    } else {
+
+        pendingTasks.forEach(task => {
+
+            const notification =
+                document.createElement("div");
+
+            notification.style.padding =
+                "12px 0";
+
+            notification.style.borderBottom =
+                "1px solid #eadfd2";
+
+
+            const title =
+                document.createElement("strong");
+
+            title.textContent =
+                task.title;
+
+            title.style.display =
+                "block";
+
+
+            const details =
+                document.createElement("small");
+
+            let text = "Pending";
+
+            if (task.time) {
+                text += " • " + task.time;
+            }
+
+            if (task.subject) {
+                text += " • " + task.subject;
+            }
+
+            details.textContent = text;
+
+            details.style.color =
+                "#927a65";
+
+
+            notification.appendChild(title);
+            notification.appendChild(details);
+
+            popup.appendChild(notification);
+
+        });
+
+    }
+
+
+    document.body.appendChild(popup);
+
+
+    /* Close when clicking outside */
+
+    setTimeout(() => {
+
+        document.addEventListener(
+            "click",
+            closeNotificationOutside
+        );
+
+    }, 0);
+
+
+    function closeNotificationOutside(event) {
+
+        if (
+            !popup.contains(event.target) &&
+            event.target !== notificationButton
+        ) {
+
+            popup.remove();
+
+            document.removeEventListener(
+                "click",
+                closeNotificationOutside
+            );
+
+        }
+
+    }
+
+}
+
+
+/* Notification button click */
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            showNotifications();
+
+        }
+    );
+
+}
 
     renderCalendar();
 
