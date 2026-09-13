@@ -3,7 +3,129 @@
    DASHBOARD JAVASCRIPT
    ========================================================= */
 
+    /* =========================================================
+   PAPER NEST CONFIRMATION MODAL
+   ========================================================= */
 
+function showConfirmation({
+    title = "Are you sure?",
+    message = "Are you sure you want to continue?",
+    icon = "🗑️",
+    confirmText = "Confirm"
+}) {
+    return new Promise((resolve) => {
+
+        const modal =
+            document.getElementById("confirmationModal");
+
+        const modalTitle =
+            document.getElementById("confirmationTitle");
+
+        const modalMessage =
+            document.getElementById("confirmationMessage");
+
+        const modalIcon =
+            document.getElementById("confirmationIcon");
+
+        const cancelButton =
+            document.getElementById("confirmationCancelBtn");
+
+        const confirmButton =
+            document.getElementById("confirmationConfirmBtn");
+
+        if (!modal) {
+            console.error(
+                "Confirmation modal not found."
+            );
+
+            resolve(false);
+            return;
+        }
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalIcon.textContent = icon;
+        confirmButton.textContent = confirmText;
+
+        modal.style.display = "flex";
+
+        document.body.style.overflow = "hidden";
+
+        function close(result) {
+
+            modal.style.display = "none";
+
+            document.body.style.overflow = "";
+
+            cancelButton.removeEventListener(
+                "click",
+                onCancel
+            );
+
+            confirmButton.removeEventListener(
+                "click",
+                onConfirm
+            );
+
+            modal.removeEventListener(
+                "click",
+                onBackgroundClick
+            );
+
+            document.removeEventListener(
+                "keydown",
+                onKeyDown
+            );
+
+            resolve(result);
+        }
+
+        function onCancel() {
+            close(false);
+        }
+
+        function onConfirm() {
+            close(true);
+        }
+
+        function onBackgroundClick(event) {
+
+            if (event.target === modal) {
+                close(false);
+            }
+
+        }
+
+        function onKeyDown(event) {
+
+            if (event.key === "Escape") {
+                close(false);
+            }
+
+        }
+
+        cancelButton.addEventListener(
+            "click",
+            onCancel
+        );
+
+        confirmButton.addEventListener(
+            "click",
+            onConfirm
+        );
+
+        modal.addEventListener(
+            "click",
+            onBackgroundClick
+        );
+
+        document.addEventListener(
+            "keydown",
+            onKeyDown
+        );
+
+    });
+}
 /* =========================================================
    API URLS
    ========================================================= */
@@ -981,15 +1103,16 @@ async function deleteTask(id) {
     }
 
 
-    const confirmed =
-        confirm(
-            `Are you sure you want to delete "${task.title}"?`
-        );
+    const confirmed = await showConfirmation({
+    title: "Delete task?",
+    message: `Are you sure you want to delete "${task.title}"?`,
+    icon: "🗑️",
+    confirmText: "Delete"
+});
 
-
-    if (!confirmed) {
-        return;
-    }
+if (!confirmed) {
+    return;
+}
 
 
     /*
@@ -2717,15 +2840,16 @@ if (logoutButton) {
         "click",
         function () {
 
-            const confirmed =
-                confirm(
-                    "Are you sure you want to log out?"
-                );
+            const confirmed = await showConfirmation({
+    title: "Log out?",
+    message: "Are you sure you want to log out of The Paper Nest?",
+    icon: "↪️",
+    confirmText: "Log out"
+});
 
-
-            if (!confirmed) {
-                return;
-            }
+if (!confirmed) {
+    return;
+}
 
 
             /*
