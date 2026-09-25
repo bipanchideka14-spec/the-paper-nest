@@ -360,7 +360,7 @@ router.post("/forgot-password/send-otp", async (req, res) => {
             message: "Could not send verification code."
         });
     }
-});
+);
 
 // =========================================================
 // FORGOT PASSWORD — VERIFY OTP
