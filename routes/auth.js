@@ -120,41 +120,89 @@ function generateResetToken() {
 }
 
 async function sendOTPEmail(email, otp) {
-    if (!transporter) {
-        throw new Error("Email transporter is not configured. Please set EMAIL_USER and EMAIL_APP_PASSWORD in .env file.");
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
+    if (!RESEND_API_KEY) {
+        throw new Error("RESEND_API_KEY is missing from environment variables.");
     }
 
-    const mailOptions = {
-        from: `"The Paper Nest" <${EMAIL_USER}>`,
-        to: email,
-        subject: "The Paper Nest — Password Reset OTP",
-        text: `The Paper Nest\n\nYour password reset verification code is:\n\n${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\nDo not share this OTP with anyone.`,
-        html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>The Paper Nest - Password Reset</title>
-</head>
-<body style="margin:0; padding:0; background:#f7f1e8; font-family:Arial,Helvetica,sans-serif;">
-    <div style="max-width:600px; margin:40px auto; background:white; border-radius:16px; padding:40px; box-sizing:border-box; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-        <h1 style="margin:0 0 10px; color:#4e3b32; font-size:32px;">The Paper Nest</h1>
-        <p style="color:#765f52; font-size:16px; margin-bottom:30px;">Password Reset Verification</p>
-        <p style="color:#333; font-size:16px;">Your verification code is:</p>
-        <div style="display:inline-block; padding:18px 28px; margin:20px 0; border-radius:12px; background:#eee7dc; color:#4e3b32; font-size:36px; font-weight:bold; letter-spacing:8px;">
-            ${otp}
-        </div>
-        <p style="color:#555; font-size:15px;">This OTP will expire in <strong>10 minutes</strong>.</p>
-        <p style="color:#888; font-size:13px; margin-top:30px;">If you did not request a password reset, you can safely ignore this email.</p>
-        <p style="color:#888; font-size:13px;">Never share your OTP with anyone.</p>
-    </div>
-</body>
-</html>
-`
-    };
+    const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${RESEND_API_KEY}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            from: "The Paper Nest <onboarding@resend.dev>",
+            to: [email],
+            subject: "The Paper Nest - Password Reset OTP",
 
-    return transporter.sendMail(mailOptions);
+            text: `Your The Paper Nest password reset OTP is: ${otp}
+
+This OTP will expire in 10 minutes.
+
+If you did not request a password reset, please ignore this email.`,
+
+            html: `
+                <div style="
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: 40px auto;
+                    padding: 35px;
+                    background: #fffaf5;
+                    border-radius: 15px;
+                    text-align: center;
+                ">
+                    <h1 style="color: #4e3b32;">
+                        The Paper Nest
+                    </h1>
+
+                    <h2>Password Reset</h2>
+
+                    <p>Your verification code is:</p>
+
+                    <div style="
+                        font-size: 32px;
+                        font-weight: bold;
+                        letter-spacing: 8px;
+                        padding: 20px;
+                        margin: 20px 0;
+                        background: #eee7dc;
+                        border-radius: 10px;
+                        color: #4e3b32;
+                    ">
+                        ${otp}
+                    </div>
+
+                    <p>
+                        This OTP will expire in <strong>10 minutes</strong>.
+                    </p>
+
+                    <p style="color: #777;">
+                        If you did not request a password reset,
+                        please ignore this email.
+                    </p>
+
+                    <p style="color: #777; font-size: 13px;">
+                        Do not share this OTP with anyone.
+                    </p>
+                </div>
+            `
+        })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        console.error("RESEND API ERROR:", result);
+        throw new Error(result.message || "Failed to send email");
+    }
+
+    console.log("OTP email sent successfully.");
+
+    return result;
 }
+
 
 // =========================================================
 // SIGN UP
