@@ -4432,16 +4432,18 @@ if (
         }
     );
 
+    profileButton.addEventListener(
+    "click",
+    function (event) {
 
-    profilePanel.addEventListener(
-        "click",
-        function (event) {
+        event.stopPropagation();
 
-            event.stopPropagation();
+        profilePanel.classList.toggle(
+            "show"
+        );
 
-        }
-    );
-
+    }
+);
 
     document.addEventListener(
         "click",
@@ -4456,39 +4458,67 @@ if (
 
 }
 
-
 /* =========================================================
    LOGOUT
    ========================================================= */
 
-document.addEventListener("click", function (event) {
+const logoutButton =
+    document.getElementById("profileLogout");
 
-    const logoutButton =
-        event.target.closest(
-            "#profileLogout, #logoutBtn"
-        );
+const sidebarLogoutButton =
+    document.getElementById("logoutBtn");
 
-    if (!logoutButton) {
-        return;
-    }
 
-    console.log("Logout button clicked.");
+function logoutUser() {
+
+    console.log("LOGOUT CLICKED");
 
     localStorage.removeItem("paperNestToken");
     localStorage.removeItem("paperNestUser");
 
-    // Close profile panel if it is open
-    const profilePanel =
-        document.getElementById("profilePanel");
+    // Clear any cached account data if present
+    sessionStorage.clear();
 
-    if (profilePanel) {
-        profilePanel.classList.remove("show");
-    }
-
-    // Redirect to login page
     window.location.replace("/login");
+}
 
-});
+
+/* PROFILE LOGOUT */
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            logoutUser();
+
+        }
+    );
+
+}
+
+
+/* SIDEBAR LOGOUT */
+
+if (sidebarLogoutButton) {
+
+    sidebarLogoutButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            logoutUser();
+
+        }
+    );
+
+}
 /* =========================================================
    NOTIFICATION BUTTON
    ========================================================= */
