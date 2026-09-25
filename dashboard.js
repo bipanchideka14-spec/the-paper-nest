@@ -4406,7 +4406,6 @@ const profileButton =
         "profileButton"
     );
 
-
 const profilePanel =
     getElement(
         "profilePanel"
@@ -4418,12 +4417,15 @@ if (
     profilePanel
 ) {
 
+    /* -----------------------------------------
+       OPEN / CLOSE PROFILE POPUP
+       ----------------------------------------- */
+
     profileButton.addEventListener(
         "click",
         function (event) {
 
             event.stopPropagation();
-
 
             profilePanel.classList.toggle(
                 "show"
@@ -4432,18 +4434,24 @@ if (
         }
     );
 
-    profileButton.addEventListener(
-    "click",
-    function (event) {
 
-        event.stopPropagation();
+    /* -----------------------------------------
+       KEEP POPUP OPEN WHEN CLICKING INSIDE
+       ----------------------------------------- */
 
-        profilePanel.classList.toggle(
-            "show"
-        );
+    profilePanel.addEventListener(
+        "click",
+        function (event) {
 
-    }
-);
+            event.stopPropagation();
+
+        }
+    );
+
+
+    /* -----------------------------------------
+       CLOSE POPUP WHEN CLICKING OUTSIDE
+       ----------------------------------------- */
 
     document.addEventListener(
         "click",
@@ -4458,43 +4466,69 @@ if (
 
 }
 
+
 /* =========================================================
    LOGOUT
    ========================================================= */
 
-const logoutButton =
-    document.getElementById("profileLogout");
 
-const sidebarLogoutButton =
-    document.getElementById("logoutBtn");
+/* -----------------------------------------
+   PROFILE POPUP LOGOUT BUTTON
+   ----------------------------------------- */
 
-
-function logoutUser() {
-
-    console.log("LOGOUT CLICKED");
-
-    localStorage.removeItem("paperNestToken");
-    localStorage.removeItem("paperNestUser");
-
-    // Clear any cached account data if present
-    sessionStorage.clear();
-
-    window.location.replace("/login");
-}
+const profileLogout =
+    document.getElementById(
+        "profileLogout"
+    );
 
 
-/* PROFILE LOGOUT */
+if (profileLogout) {
 
-if (logoutButton) {
-
-    logoutButton.addEventListener(
+    profileLogout.addEventListener(
         "click",
         function (event) {
 
             event.preventDefault();
+
             event.stopPropagation();
 
-            logoutUser();
+
+            /* -----------------------------------------
+               CONFIRM LOGOUT
+               ----------------------------------------- */
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to log out?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               REMOVE LOGIN INFORMATION
+               ----------------------------------------- */
+
+            localStorage.removeItem(
+                "paperNestToken"
+            );
+
+            localStorage.removeItem(
+                "paperNestUser"
+            );
+
+
+            /* -----------------------------------------
+               REDIRECT TO LOGIN
+               ----------------------------------------- */
+
+            window.location.href =
+                "/login";
 
         }
     );
@@ -4502,18 +4536,61 @@ if (logoutButton) {
 }
 
 
-/* SIDEBAR LOGOUT */
+/* -----------------------------------------
+   SIDEBAR LOGOUT BUTTON
+   ----------------------------------------- */
 
-if (sidebarLogoutButton) {
+const sidebarLogout =
+    document.getElementById(
+        "logoutBtn"
+    );
 
-    sidebarLogoutButton.addEventListener(
+
+if (sidebarLogout) {
+
+    sidebarLogout.addEventListener(
         "click",
         function (event) {
 
             event.preventDefault();
-            event.stopPropagation();
 
-            logoutUser();
+
+            /* -----------------------------------------
+               CONFIRM LOGOUT
+               ----------------------------------------- */
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to log out?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               REMOVE LOGIN INFORMATION
+               ----------------------------------------- */
+
+            localStorage.removeItem(
+                "paperNestToken"
+            );
+
+            localStorage.removeItem(
+                "paperNestUser"
+            );
+
+
+            /* -----------------------------------------
+               REDIRECT TO LOGIN
+               ----------------------------------------- */
+
+            window.location.href =
+                "/login";
 
         }
     );
