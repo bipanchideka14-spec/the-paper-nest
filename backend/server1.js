@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 // =========================================================
 
 app.get("/", (req, res) => {
-    res.redirect("/login");
+    res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
 app.get("/login", (req, res) => {
