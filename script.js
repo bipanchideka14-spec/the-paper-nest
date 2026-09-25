@@ -7,9 +7,8 @@
 /* =========================================================
    API URLS
    ========================================================= */
-
-const API_URL = "https://the-paper-nest.onrender.com/api/tasks";
-const AUTH_API_URL = "https://the-paper-nest.onrender.com/api/auth";
+const API_URL = "/api/tasks";
+const AUTH_API_URL = "/api/auth";
 
 
 /* =========================================================

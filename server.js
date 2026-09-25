@@ -157,34 +157,31 @@ app.get("/api/health", (req, res) => {
     message: "The Paper Nest server is running"
   });
 });
-
-// ==========================================
 // FRONTEND PAGE NAVIGATION ROUTES
-// ==========================================
+// =================================
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"));
+    res.sendFile(path.join(__dirname, "login.html"));
 });
 
 app.get("/signup", (req, res) => {
-  res.sendFile(path.join(__dirname, "signup.html"));
+    res.sendFile(path.join(__dirname, "signup.html"));
 });
 
-app.get(["/forgot-password", "/forget", "/forget-password"], (req, res) => {
-  res.sendFile(path.join(__dirname, "forget.html"));
+app.get(["/forgot-password", "/forgot"], (req, res) => {
+    res.sendFile(path.join(__dirname, "forget.html"));
 });
 
 app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "dashboard.html"));
+    res.sendFile(path.join(__dirname, "dashboard.html"));
 });
 
-// Serve static assets (HTML, CSS, JS, Images)
-app.use(express.static(path.join(__dirname)));
-
+// Serve static assets
+app.use(express.static(__dirname));
 // Fallback error handler
 app.use((err, req, res, next) => {
   console.error("Express Error:", err);
