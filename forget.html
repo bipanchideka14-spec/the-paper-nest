@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        The Paper Nest - Reset Password
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: #f7f1e8;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #4e3b32;
+
+        }
+
+        .container {
+
+            width: 100%;
+
+            max-width: 530px;
+
+            margin: 30px;
+
+            background: #fffaf5;
+
+            border-radius: 24px;
+
+            padding: 42px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(60, 45, 35, 0.15);
+
+        }
+
+        .logo {
+
+            display: block;
+
+            width: 80px;
+
+            height: auto;
+
+            margin: 0 auto 20px;
+
+        }
+
+        h1 {
+
+            text-align: center;
+
+            margin: 0;
+
+            font-family:
+                Georgia,
+                serif;
+
+            font-size: 42px;
+
+            color: #4e3b32;
+
+        }
+
+        .subtitle {
+
+            text-align: center;
+
+            margin:
+                10px 0 35px;
+
+            font-size: 18px;
+
+            color: #765f52;
+
+        }
+
+        .step {
+
+            display: none;
+
+        }
+
+        .step.active {
+
+            display: block;
+
+        }
+
+        label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+            font-size: 16px;
+
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: 1px solid #cbbdb0;
+
+            border-radius: 12px;
+
+            background: #edf3fc;
+
+            font-size: 17px;
+
+            outline: none;
+
+        }
+
+        input:focus {
+
+            border-color: #4e3b32;
+
+        }
+
+        .otp-input {
+
+            text-align: center;
+
+            font-size: 30px;
+
+            letter-spacing: 8px;
+
+            font-weight: bold;
+
+        }
+
+        button {
+
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 16px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: #4e3b32;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+        button:hover {
+
+            opacity: 0.92;
+
+        }
+
+        button:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+        }
+
+        .secondary {
+
+            background: transparent;
+
+            color: #4e3b32;
+
+            border:
+                1px solid #4e3b32;
+
+        }
+
+        .message {
+
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            font-size: 15px;
+
+        }
+
+        .message.error {
+
+            display: block;
+
+            color: #a32222;
+
+            background: #fff0f0;
+
+        }
+
+        .message.success {
+
+            display: block;
+
+            color: #276b3a;
+
+            background: #effaf1;
+
+        }
+
+        .small {
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #765f52;
+
+            font-size: 14px;
+
+        }
+
+        .back {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 28px;
+
+            color: #4e3b32;
+
+            text-decoration: none;
+
+            font-size: 16px;
+
+        }
+
+        .back:hover {
+
+            text-decoration: underline;
+
+        }
+
+        .password-rules {
+
+            font-size: 13px;
+
+            color: #765f52;
+
+            margin-top: 8px;
+
+        }
+
+        .timer {
+
+            text-align: center;
+
+            margin-top: 14px;
+
+            font-size: 14px;
+
+            color: #765f52;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <img
+        src="logo.png"
+        class="logo"
+        alt="The Paper Nest"
+        onerror="this.style.display='none'"
+    >
+
+    <h1>
+        The Paper Nest
+    </h1>
+
+    <div class="subtitle">
+        Reset your password securely
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STEP 1 -->
+    <!-- ================================================= -->
+
+    <div
+        id="stepEmail"
+        class="step active"
+    >
+
+        <label for="email">
+            Registered email address
+        </label>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+        >
+
+        <button
+            id="sendOtpBtn"
+            type="button"
+        >
+            Send OTP
+        </button>
+
+        <div
+            id="emailMessage"
+            class="message"
+        ></div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STEP 2 -->
+    <!-- ================================================= -->
+
+    <div
+        id="stepOtp"
+        class="step"
+    >
+
+        <label for="otp">
+            Enter verification code
+        </label>
+
+        <input
+            id="otp"
+            class="otp-input"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="000000"
+            autocomplete="one-time-code"
+        >
+
+        <button
+            id="verifyOtpBtn"
+            type="button"
+        >
+            Verify OTP
+        </button>
+
+        <button
+            id="resendOtpBtn"
+            class="secondary"
+            type="button"
+        >
+            Resend OTP
+        </button>
+
+        <div
+            id="otpMessage"
+            class="message"
+        ></div>
+
+        <div
+            id="timer"
+            class="timer"
+        ></div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STEP 3 -->
+    <!-- ================================================= -->
+
+    <div
+        id="stepPassword"
+        class="step"
+    >
+
+        <label for="newPassword">
+            New password
+        </label>
+
+        <input
+            id="newPassword"
+            type="password"
+            placeholder="Enter new password"
+            autocomplete="new-password"
+        >
+
+        <div class="password-rules">
+            Password must be at least 6 characters.
+        </div>
+
+
+        <label
+            for="confirmPassword"
+            style="margin-top:20px;"
+        >
+            Confirm new password
+        </label>
+
+        <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm new password"
+            autocomplete="new-password"
+        >
+
+        <button
+            id="resetPasswordBtn"
+            type="button"
+        >
+            Reset Password
+        </button>
+
+        <div
+            id="passwordMessage"
+            class="message"
+        ></div>
+
+    </div>
+
+
+    <a
+        href="/login"
+        class="back"
+    >
+        ← Back to Login
+    </a>
+
+</div>
+
+
+<script>
+
+    // =====================================================
+    // STATE
+    // =====================================================
+
+    let currentEmail = "";
+
+    let resetToken = "";
+
+    let timerInterval = null;
+
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const stepEmail =
+        document.getElementById(
+            "stepEmail"
+        );
+
+    const stepOtp =
+        document.getElementById(
+            "stepOtp"
+        );
+
+    const stepPassword =
+        document.getElementById(
+            "stepPassword"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "email"
+        );
+
+    const otpInput =
+        document.getElementById(
+            "otp"
+        );
+
+    const newPasswordInput =
+        document.getElementById(
+            "newPassword"
+        );
+
+    const confirmPasswordInput =
+        document.getElementById(
+            "confirmPassword"
+        );
+
+    const sendOtpBtn =
+        document.getElementById(
+            "sendOtpBtn"
+        );
+
+    const verifyOtpBtn =
+        document.getElementById(
+            "verifyOtpBtn"
+        );
+
+    const resendOtpBtn =
+        document.getElementById(
+            "resendOtpBtn"
+        );
+
+    const resetPasswordBtn =
+        document.getElementById(
+            "resetPasswordBtn"
+        );
+
+    const emailMessage =
+        document.getElementById(
+            "emailMessage"
+        );
+
+    const otpMessage =
+        document.getElementById(
+            "otpMessage"
+        );
+
+    const passwordMessage =
+        document.getElementById(
+            "passwordMessage"
+        );
+
+    const timer =
+        document.getElementById(
+            "timer"
+        );
+
+
+    // =====================================================
+    // MESSAGE FUNCTION
+    // =====================================================
+
+    function showMessage(
+        element,
+        message,
+        type
+    ) {
+
+        element.textContent =
+            message;
+
+        element.className =
+            "message " + type;
+
+    }
+
+
+    function clearMessage(element) {
+
+        element.textContent = "";
+
+        element.className =
+            "message";
+
+    }
+
+
+    // =====================================================
+    // CHANGE STEP
+    // =====================================================
+
+    function showStep(step) {
+
+        stepEmail.classList.remove(
+            "active"
+        );
+
+        stepOtp.classList.remove(
+            "active"
+        );
+
+        stepPassword.classList.remove(
+            "active"
+        );
+
+        step.classList.add(
+            "active"
+        );
+
+    }
+
+
+    // =====================================================
+    // SEND OTP
+    // =====================================================
+
+    async function sendOTP() {
+
+        const email =
+            emailInput.value
+                .trim()
+                .toLowerCase();
+
+        clearMessage(
+            emailMessage
+        );
+
+        if (!email) {
+
+            showMessage(
+                emailMessage,
+                "Please enter your registered email address.",
+                "error"
+            );
+
+            return;
+        }
+
+        sendOtpBtn.disabled = true;
+
+        sendOtpBtn.textContent =
+            "Sending OTP...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/forgot-password/send-otp",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                email: email
+                            })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Could not send OTP."
+                );
+
+            }
+
+            currentEmail =
+                email;
+
+            showMessage(
+                emailMessage,
+                data.message ||
+                    "OTP sent successfully.",
+                "success"
+            );
+
+            /*
+             * Move to OTP screen.
+             */
+
+            showStep(
+                stepOtp
+            );
+
+            showMessage(
+                otpMessage,
+                data.message || "OTP sent successfully. Please check your email.",
+                "success"
+            );
+
+            startTimer(
+                10 * 60
+            );
+
+            otpInput.focus();
+
+        } catch (error) {
+
+            console.error(
+                "Send OTP error:",
+                error
+            );
+
+            showMessage(
+                emailMessage,
+                error.message ||
+                    "Could not send verification code.",
+                "error"
+            );
+
+        } finally {
+
+            sendOtpBtn.disabled =
+                false;
+
+            sendOtpBtn.textContent =
+                "Send OTP";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // VERIFY OTP
+    // =====================================================
+
+    async function verifyOTP() {
+
+        const otp =
+            otpInput.value
+                .trim();
+
+        clearMessage(
+            otpMessage
+        );
+
+        if (!/^\d{6}$/.test(otp)) {
+
+            showMessage(
+                otpMessage,
+                "Please enter the 6-digit OTP sent to your email.",
+                "error"
+            );
+
+            return;
+        }
+
+        verifyOtpBtn.disabled =
+            true;
+
+        verifyOtpBtn.textContent =
+            "Verifying...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/forgot-password/verify-otp",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                email:
+                                    currentEmail,
+                                otp:
+                                    otp
+                            })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "OTP verification failed."
+                );
+
+            }
+
+            resetToken =
+                data.resetToken;
+
+            showMessage(
+                otpMessage,
+                "OTP verified successfully.",
+                "success"
+            );
+
+            stopTimer();
+
+            showStep(
+                stepPassword
+            );
+
+            newPasswordInput.focus();
+
+        } catch (error) {
+
+            console.error(
+                "Verify OTP error:",
+                error
+            );
+
+            showMessage(
+                otpMessage,
+                error.message ||
+                    "Invalid OTP.",
+                "error"
+            );
+
+        } finally {
+
+            verifyOtpBtn.disabled =
+                false;
+
+            verifyOtpBtn.textContent =
+                "Verify OTP";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // RESEND OTP
+    // =====================================================
+
+    async function resendOTP() {
+
+        clearMessage(
+            otpMessage
+        );
+
+        resendOtpBtn.disabled =
+            true;
+
+        resendOtpBtn.textContent =
+            "Sending...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/forgot-password/resend-otp",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                email:
+                                    currentEmail
+                            })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Could not resend OTP."
+                );
+
+            }
+
+            showMessage(
+                otpMessage,
+                data.message ||
+                    "New OTP sent.",
+                "success"
+            );
+
+            otpInput.value = "";
+
+            startTimer(
+                10 * 60
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Resend OTP error:",
+                error
+            );
+
+            showMessage(
+                otpMessage,
+                error.message ||
+                    "Could not resend OTP.",
+                "error"
+            );
+
+        } finally {
+
+            resendOtpBtn.disabled =
+                false;
+
+            resendOtpBtn.textContent =
+                "Resend OTP";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // RESET PASSWORD
+    // =====================================================
+
+    async function resetPassword() {
+
+        const newPassword =
+            newPasswordInput.value;
+
+        const confirmPassword =
+            confirmPasswordInput.value;
+
+        clearMessage(
+            passwordMessage
+        );
+
+        if (
+            newPassword.length < 6
+        ) {
+
+            showMessage(
+                passwordMessage,
+                "Password must be at least 6 characters.",
+                "error"
+            );
+
+            return;
+        }
+
+        if (
+            newPassword !==
+            confirmPassword
+        ) {
+
+            showMessage(
+                passwordMessage,
+                "Passwords do not match.",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!resetToken) {
+
+            showMessage(
+                passwordMessage,
+                "Your reset session is invalid. Please start again.",
+                "error"
+            );
+
+            return;
+        }
+
+        resetPasswordBtn.disabled =
+            true;
+
+        resetPasswordBtn.textContent =
+            "Resetting...";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/forgot-password/reset",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                email:
+                                    currentEmail,
+                                resetToken:
+                                    resetToken,
+                                newPassword:
+                                    newPassword
+                            })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Could not reset password."
+                );
+
+            }
+
+            showMessage(
+                passwordMessage,
+                data.message ||
+                    "Password reset successfully.",
+                "success"
+            );
+
+            resetToken = "";
+
+            setTimeout(
+                () => {
+                    window.location.href =
+                        "/login";
+                },
+                1800
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Reset password error:",
+                error
+            );
+
+            showMessage(
+                passwordMessage,
+                error.message ||
+                    "Could not reset password.",
+                "error"
+            );
+
+        } finally {
+
+            resetPasswordBtn.disabled =
+                false;
+
+            resetPasswordBtn.textContent =
+                "Reset Password";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // TIMER
+    // =====================================================
+
+    function startTimer(seconds) {
+
+        stopTimer();
+
+        let remaining =
+            seconds;
+
+        updateTimer(
+            remaining
+        );
+
+        timerInterval =
+            setInterval(
+                () => {
+
+                    remaining--;
+
+                    updateTimer(
+                        remaining
+                    );
+
+                    if (
+                        remaining <= 0
+                    ) {
+
+                        stopTimer();
+
+                        timer.textContent =
+                            "OTP expired. Please request a new OTP.";
+
+                    }
+
+                },
+                1000
+            );
+
+    }
+
+
+    function updateTimer(seconds) {
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+        const secs =
+            seconds % 60;
+
+        timer.textContent =
+            `OTP expires in ${minutes}:${String(secs).padStart(2, "0")}`;
+
+    }
+
+
+    function stopTimer() {
+
+        if (
+            timerInterval
+        ) {
+
+            clearInterval(
+                timerInterval
+            );
+
+            timerInterval =
+                null;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // INPUT RESTRICTION
+    // =====================================================
+
+    otpInput.addEventListener(
+        "input",
+        () => {
+
+            otpInput.value =
+                otpInput.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    )
+                    .slice(
+                        0,
+                        6
+                    );
+
+        }
+    );
+
+
+    // =====================================================
+    // ENTER KEY SUPPORT
+    // =====================================================
+
+    emailInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                sendOTP();
+
+            }
+
+        }
+    );
+
+
+    otpInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                verifyOTP();
+
+            }
+
+        }
+    );
+
+
+    confirmPasswordInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                resetPassword();
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // BUTTON EVENTS
+    // =====================================================
+
+    sendOtpBtn.addEventListener(
+        "click",
+        sendOTP
+    );
+
+    verifyOtpBtn.addEventListener(
+        "click",
+        verifyOTP
+    );
+
+    resendOtpBtn.addEventListener(
+        "click",
+        resendOTP
+    );
+
+    resetPasswordBtn.addEventListener(
+        "click",
+        resetPassword
+    );
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Paper Nest — Your Daily Planner</title>
+    <meta name="description" content="The Paper Nest is a cozy, beautiful daily planner to organize your tasks, notes, and subjects all in one place.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* =============================================
+           RESET & BASE
+        ============================================= */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --cream:        #fdf6ee;
+            --warm-white:   #fffaf4;
+            --parchment:    #f1e7d8;
+            --parchment-dk: #e8d9c8;
+            --brown-light:  #c4a882;
+            --brown:        #8b6448;
+            --brown-dark:   #4b3728;
+            --brown-deep:   #2e2018;
+            --terracotta:   #c47a5a;
+            --sage:         #8aac8a;
+            --dusty-rose:   #c9908a;
+            --text-main:    #3a2c20;
+            --text-muted:   #7a6555;
+            --text-light:   #a08b7a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* =============================================
+           NAVBAR
+        ============================================= */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(253, 246, 238, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(196, 168, 130, 0.25);
+            padding: 0 5%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-brand img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .nav-brand-name {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--brown-dark);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--brown-dark);
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-ghost {
+            text-decoration: none;
+            color: var(--brown-dark);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 10px 22px;
+            border-radius: 50px;
+            border: 1.5px solid var(--brown-dark);
+            transition: all 0.25s ease;
+        }
+
+        .btn-ghost:hover {
+            background: var(--brown-dark);
+            color: white;
+        }
+
+        .btn-primary {
+            text-decoration: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 50px;
+            background: var(--brown-dark);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--brown-deep);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(74, 55, 40, 0.25);
+        }
+
+        /* =============================================
+           HERO SECTION
+        ============================================= */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 100px 6% 60px;
+            gap: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(196, 168, 130, 0.18) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 172, 138, 0.10) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--parchment);
+            border: 1px solid var(--parchment-dk);
+            border-radius: 50px;
+            padding: 7px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--brown);
+            letter-spacing: 0.3px;
+            margin-bottom: 30px;
+            animation: fadeSlideDown 0.6s ease both;
+        }
+
+        .hero-badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--terracotta);
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(52px, 6vw, 80px);
+            font-weight: 500;
+            line-height: 1.05;
+            color: var(--brown-deep);
+            margin-bottom: 24px;
+            animation: fadeSlideDown 0.7s ease 0.1s both;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--terracotta);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            line-height: 1.75;
+            color: var(--text-muted);
+            max-width: 460px;
+            margin-bottom: 42px;
+            animation: fadeSlideDown 0.7s ease 0.2s both;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            animation: fadeSlideDown 0.7s ease 0.3s both;
+        }
+
+        .btn-hero-primary {
+            text-decoration: none;
+            background: var(--brown-dark);
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            padding: 16px 36px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-hero-primary:hover {
+            background: var(--brown-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 55, 40, 0.28);
+        }
+
+        .btn-hero-secondary {
+            text-decoration: none;
+            color: var(--brown-dark);
+            font-size: 17px;
+            font-weight: 600;
+            padding: 16px 36px;
+            border-radius: 50px;
+            border: 1.5px solid var(--brown-dark);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-hero-secondary:hover {
+            background: var(--brown-dark);
+            color: white;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 36px;
+            margin-top: 50px;
+            animation: fadeSlideDown 0.7s ease 0.4s both;
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-stat-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 34px;
+            font-weight: 600;
+            color: var(--brown-dark);
+            line-height: 1;
+        }
+
+        .hero-stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .hero-stat-divider {
+            width: 1px;
+            background: var(--parchment-dk);
+            height: 40px;
+            align-self: center;
+        }
+
+        /* Hero Image */
+        .hero-image-area {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            animation: fadeSlideUp 0.8s ease 0.2s both;
+        }
+
+        .hero-image-frame {
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 80px rgba(74, 55, 40, 0.2),
+                0 0 0 8px rgba(255, 250, 244, 0.8),
+                0 0 0 9px rgba(196, 168, 130, 0.3);
+            max-width: 420px;
+            width: 100%;
+            transform: rotate(1.5deg);
+            transition: transform 0.4s ease;
+        }
+
+        .hero-image-frame:hover {
+            transform: rotate(0deg) scale(1.01);
+        }
+
+        .hero-image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-float-card {
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            padding: 14px 18px;
+            box-shadow: 0 8px 30px rgba(74, 55, 40, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .hero-float-card.card-top {
+            top: -20px;
+            left: -30px;
+            animation-delay: 0s;
+        }
+
+        .hero-float-card.card-bottom {
+            bottom: 30px;
+            right: -25px;
+            animation-delay: 2s;
+        }
+
+        .float-icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .float-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--brown-dark);
+        }
+
+        .float-text span {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* =============================================
+           FEATURES SECTION
+        ============================================= */
+        .features {
+            padding: 100px 6%;
+            background: var(--warm-white);
+        }
+
+        .section-label {
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--brown);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(36px, 4vw, 54px);
+            font-weight: 500;
+            color: var(--brown-deep);
+            margin-bottom: 16px;
+            line-height: 1.15;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 520px;
+            margin: 0 auto 70px;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--cream);
+            border-radius: 22px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(196, 168, 130, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(74, 55, 40, 0.12);
+        }
+
+        .feature-card-img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .feature-card-body {
+            padding: 26px;
+        }
+
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .feature-card-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--brown-dark);
+            margin-bottom: 10px;
+        }
+
+        .feature-card-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* =============================================
+           HOW IT WORKS
+        ============================================= */
+        .how-it-works {
+            padding: 100px 6%;
+            background: var(--parchment);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(196, 168, 130, 0.25) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 38px;
+            left: calc(12.5% + 38px);
+            right: calc(12.5% + 38px);
+            height: 2px;
+            background: linear-gradient(to right, var(--brown-light), transparent);
+            border-top: 2px dashed var(--brown-light);
+        }
+
+        .step-card {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: var(--warm-white);
+            border: 2px solid var(--brown-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            font-weight: 600;
+            color: var(--brown);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover .step-number {
+            background: var(--brown-dark);
+            color: white;
+            border-color: var(--brown-dark);
+            transform: scale(1.1);
+        }
+
+        .step-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--brown-dark);
+            margin-bottom: 10px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* =============================================
+           QUOTES SECTION
+        ============================================= */
+        .quotes-section {
+            padding: 100px 6%;
+            background: var(--warm-white);
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .quote-card {
+            background: var(--cream);
+            border-radius: 22px;
+            padding: 34px;
+            border: 1px solid rgba(196, 168, 130, 0.2);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(74, 55, 40, 0.1);
+        }
+
+        .quote-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 80px;
+            line-height: 0.6;
+            color: var(--parchment-dk);
+            position: absolute;
+            top: 24px;
+            left: 28px;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin-top: 28px;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        .quote-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quote-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--parchment);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--brown);
+            border: 2px solid var(--parchment-dk);
+        }
+
+        .quote-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--brown-dark);
+        }
+
+        .quote-role {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .quote-stars {
+            color: #d4954a;
+            font-size: 14px;
+            margin-bottom: 4px;
+            letter-spacing: 2px;
+        }
+
+        /* =============================================
+           CTA SECTION
+        ============================================= */
+        .cta-section {
+            padding: 100px 6%;
+            background: var(--brown-dark);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            top: -200px;
+            left: -200px;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            bottom: -150px;
+            right: -100px;
+        }
+
+        .cta-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 7px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+            margin-bottom: 28px;
+        }
+
+        .cta-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(40px, 5vw, 64px);
+            font-weight: 500;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title em {
+            font-style: italic;
+            color: var(--parchment);
+        }
+
+        .cta-sub {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 46px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-cta-primary {
+            text-decoration: none;
+            background: var(--cream);
+            color: var(--brown-dark);
+            font-size: 17px;
+            font-weight: 700;
+            padding: 17px 42px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta-primary:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-cta-secondary {
+            text-decoration: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 17px;
+            font-weight: 600;
+            padding: 17px 42px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta-secondary:hover {
+            border-color: rgba(255, 255, 255, 0.7);
+            color: white;
+        }
+
+        /* =============================================
+           FOOTER
+        ============================================= */
+        footer {
+            background: var(--brown-deep);
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 30px 6%;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* =============================================
+           ANIMATIONS
+        ============================================= */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
+        }
+
+        /* Scroll-reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (max-width: 1024px) {
+            .features-grid,
+            .quotes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps-grid::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 100px 5% 60px;
+                text-align: center;
+            }
+
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .hero-image-frame {
+                max-width: 340px;
+                transform: rotate(0deg);
+            }
+
+            .hero-float-card.card-top { left: -10px; }
+            .hero-float-card.card-bottom { right: -10px; }
+
+            .features-grid,
+            .quotes-grid {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                gap: 20px;
+            }
+
+            .hero-stat-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         NAVBAR
+    ============================================================ -->
+    <nav id="mainNav">
+
+        <a href="/" class="nav-brand" id="navBrand">
+            <img src="logo.png" alt="The Paper Nest Logo">
+            <span class="nav-brand-name">The Paper Nest</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+        </ul>
+
+        <div class="nav-cta">
+            <a href="/login" class="btn-ghost" id="navLogin">Log In</a>
+            <a href="/signup" class="btn-primary" id="navSignup">Get Started</a>
+        </div>
+
+    </nav>
+
+
+    <!-- ============================================================
+         HERO SECTION
+    ============================================================ -->
+    <section class="hero" id="heroSection">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Your cozy planning companion
+            </div>
+
+            <h1 class="hero-title">
+                Plan your day<br>
+                with <em>intention</em><br>
+                &amp; grace.
+            </h1>
+
+            <p class="hero-subtitle">
+                The Paper Nest is a warm, beautiful daily planner
+                that keeps your tasks, notes, and subjects
+                lovingly organised — all in one cosy place.
+            </p>
+
+            <div class="hero-actions">
+                <a href="/signup" class="btn-hero-primary" id="heroSignup">
+                    Start Planning — It's Free
+                </a>
+                <a href="/login" class="btn-hero-secondary" id="heroLogin">
+                    Sign In
+                </a>
+            </div>
+
+            <div class="hero-stats">
+
+                <div class="hero-stat">
+                    <span class="hero-stat-number">100%</span>
+                    <span class="hero-stat-label">Free to use</span>
+                </div>
+
+                <div class="hero-stat-divider"></div>
+
+                <div class="hero-stat">
+                    <span class="hero-stat-number">∞</span>
+                    <span class="hero-stat-label">Tasks & notes</span>
+                </div>
+
+                <div class="hero-stat-divider"></div>
+
+                <div class="hero-stat">
+                    <span class="hero-stat-number">1</span>
+                    <span class="hero-stat-label">Cozy nest for all</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-image-area">
+
+            <div class="hero-float-card card-top">
+                <span class="float-icon">✅</span>
+                <div class="float-text">
+                    <strong>3 tasks done!</strong>
+                    <span>Keep going 🌿</span>
+                </div>
+            </div>
+
+            <div class="hero-image-frame">
+                <img
+                    src="hero_planner.jpg"
+                    alt="A cozy daily planner journal on a warm wooden desk"
+                    id="heroImg"
+                >
+            </div>
+
+            <div class="hero-float-card card-bottom">
+                <span class="float-icon">📝</span>
+                <div class="float-text">
+                    <strong>Today's note saved</strong>
+                    <span>Synced instantly</span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================================================
+         FEATURES
+    ============================================================ -->
+    <section class="features" id="features">
+
+        <span class="section-label reveal">Everything you need</span>
+
+        <h2 class="section-title reveal">
+            A planner that feels like<br>
+            <em style="font-style:italic; color: var(--terracotta);">home.</em>
+        </h2>
+
+        <p class="section-subtitle reveal">
+            Thoughtfully designed with warmth and simplicity —
+            so you can focus on what truly matters.
+        </p>
+
+        <div class="features-grid">
+
+            <div class="feature-card reveal">
+                <img src="feature_tasks.jpg" alt="Task management illustration" class="feature-card-img">
+                <div class="feature-card-body">
+                    <span class="feature-icon">📋</span>
+                    <h3 class="feature-card-title">Smart Task Manager</h3>
+                    <p class="feature-card-text">
+                        Add, prioritise, and track your daily tasks with categories,
+                        deadlines, and progress tracking — all in a calming layout.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <img src="feature_notes.jpg" alt="Notes and sticky notes on a warm desk" class="feature-card-img">
+                <div class="feature-card-body">
+                    <span class="feature-icon">🗒️</span>
+                    <h3 class="feature-card-title">Personal Notes</h3>
+                    <p class="feature-card-text">
+                        Capture your thoughts, ideas, and reminders in beautiful
+                        note cards that feel like your own private journal.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <img src="hero_planner.jpg" alt="Subject progress tracker" class="feature-card-img" style="object-position: bottom;">
+                <div class="feature-card-body">
+                    <span class="feature-icon">📚</span>
+                    <h3 class="feature-card-title">Subject Progress</h3>
+                    <p class="feature-card-text">
+                        Track how far you've come in each subject with visual
+                        progress bars that celebrate every small milestone.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================================================
+         HOW IT WORKS
+    ============================================================ -->
+    <section class="how-it-works" id="how-it-works">
+
+        <span class="section-label reveal">Simple by design</span>
+
+        <h2 class="section-title reveal">Getting started is<br><em style="font-style:italic;">effortless.</em></h2>
+
+        <p class="section-subtitle reveal">
+            Four gentle steps and your nest is ready.
+        </p>
+
+        <div class="steps-grid">
+
+            <div class="step-card reveal">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Create an Account</h3>
+                <p class="step-text">Sign up in seconds — no credit card, no fuss. Just your name and email.</p>
+            </div>
+
+            <div class="step-card reveal">
+                <div class="step-number">2</div>
+                <h3 class="step-title">Add Your Tasks</h3>
+                <p class="step-text">Jot down everything on your mind. Set priorities, categories, and time.</p>
+            </div>
+
+            <div class="step-card reveal">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Track Your Progress</h3>
+                <p class="step-text">Watch your to-dos turn into done ✓ — feel the satisfaction every day.</p>
+            </div>
+
+            <div class="step-card reveal">
+                <div class="step-number">4</div>
+                <h3 class="step-title">Come Back Tomorrow</h3>
+                <p class="step-text">Your nest is always here, warm and waiting, ready for a fresh new day.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================================================
+         TESTIMONIALS
+    ============================================================ -->
+    <section class="quotes-section" id="testimonials">
+
+        <span class="section-label reveal">Kind words</span>
+
+        <h2 class="section-title reveal">People who love<br>their Paper Nest.</h2>
+
+        <p class="section-subtitle reveal">
+            Real thoughts from real planners. ✨
+        </p>
+
+        <div class="quotes-grid">
+
+            <div class="quote-card reveal">
+                <span class="quote-mark">"</span>
+                <div class="quote-stars">★★★★★</div>
+                <p class="quote-text">
+                    This is the most calming planner I've ever used.
+                    The design is so beautiful — I actually look forward
+                    to planning my day now!
+                </p>
+                <div class="quote-author">
+                    <div class="quote-avatar">A</div>
+                    <div>
+                        <div class="quote-name">Ananya S.</div>
+                        <div class="quote-role">Student &amp; Bookworm</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-card reveal">
+                <span class="quote-mark">"</span>
+                <div class="quote-stars">★★★★★</div>
+                <p class="quote-text">
+                    Finally, a planner that doesn't feel overwhelming.
+                    The cozy aesthetic genuinely helps me stay focused
+                    and motivated throughout the day.
+                </p>
+                <div class="quote-author">
+                    <div class="quote-avatar">R</div>
+                    <div>
+                        <div class="quote-name">Riya M.</div>
+                        <div class="quote-role">Engineering Student</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-card reveal">
+                <span class="quote-mark">"</span>
+                <div class="quote-stars">★★★★★</div>
+                <p class="quote-text">
+                    I've tried so many planners but The Paper Nest
+                    is the one that stuck. It's warm, it's simple,
+                    and it just works beautifully.
+                </p>
+                <div class="quote-author">
+                    <div class="quote-avatar">P</div>
+                    <div>
+                        <div class="quote-name">Priya K.</div>
+                        <div class="quote-role">Writer &amp; Journaller</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================================================
+         CTA SECTION
+    ============================================================ -->
+    <section class="cta-section" id="ctaSection">
+
+        <div class="cta-badge">🪺 Free forever. No catch.</div>
+
+        <h2 class="cta-title">
+            Ready to find your<br>
+            <em>cozy corner?</em>
+        </h2>
+
+        <p class="cta-sub">
+            Join The Paper Nest and start planning with intention today.
+        </p>
+
+        <div class="cta-buttons">
+            <a href="/signup" class="btn-cta-primary" id="ctaSignup">
+                Create Your Free Account
+            </a>
+            <a href="/login" class="btn-cta-secondary" id="ctaLogin">
+                Already have an account?
+            </a>
+        </div>
+
+    </section>
+
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer>
+        <p>
+            © 2026 The Paper Nest &nbsp;·&nbsp;
+            Made with 🍵 and warmth &nbsp;·&nbsp;
+            <a href="/login">Login</a>
+            &nbsp;·&nbsp;
+            <a href="/signup">Sign Up</a>
+        </p>
+    </footer>
+
+
+    <!-- ============================================================
+         SCRIPTS
+    ============================================================ -->
+    <script>
+
+        // ===== SCROLL REVEAL =====
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, i * 80);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
+
+        revealElements.forEach(el => observer.observe(el));
+
+
+        // ===== COUNTER ANIMATION =====
+        function animateCount(el, target, suffix = '', duration = 1200) {
+            let start = 0;
+            const step = target / (duration / 16);
+            const interval = setInterval(() => {
+                start = Math.min(start + step, target);
+                el.textContent = Math.round(start) + suffix;
+                if (start >= target) clearInterval(interval);
+            }, 16);
+        }
+
+
+        // ===== REDIRECT IF ALREADY LOGGED IN =====
+        (function checkAuth() {
+            const token = localStorage.getItem('paperNestToken');
+            if (token) {
+                // Show dashboard link in nav
+                const navCta = document.querySelector('.nav-cta');
+                if (navCta) {
+                    navCta.innerHTML = `
+                        <a href="/dashboard" class="btn-primary" id="navDashboard"
+                           style="background: var(--terracotta);">
+                            Open my Nest 🪺
+                        </a>
+                    `;
+                }
+            }
+        })();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Environment secrets — NEVER commit these
+.env
+.env.local
+.env.*
+
+# Dependencies
+node_modules/
+
+# Uploaded user files
+uploads/
+
+# Big binary / zip files
+*.zip
+logo.zip
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/

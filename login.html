@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login — The Paper Nest</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7f1e9;
+            color: #4b392f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #fffaf4;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(73, 53, 40, 0.15);
+        }
+
+        /* =========================
+           LEFT SIDE
+        ========================= */
+
+        .welcome-section {
+            background: #f1e7dc;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(190, 158, 127, 0.12);
+            top: -100px;
+            left: -100px;
+        }
+
+        .welcome-section::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(190, 158, 127, 0.10);
+            bottom: -100px;
+            right: -80px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .brand img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .brand-name {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 22px;
+            letter-spacing: 1px;
+            color: #4b392f;
+        }
+
+        .welcome-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .small-heading {
+            font-size: 14px;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            color: #705b4d;
+            font-weight: bold;
+        }
+
+        .welcome-text h1 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 70px;
+            line-height: 0.95;
+            font-weight: normal;
+            color: #49352c;
+            margin-bottom: 25px;
+        }
+
+        .welcome-text p {
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 400px;
+            color: #705b4d;
+        }
+
+        /* =========================
+           RIGHT SIDE
+        ========================= */
+
+        .form-section {
+            padding: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fffaf4;
+        }
+
+        .form-box {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .form-box h2 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 48px;
+            font-weight: normal;
+            color: #49352c;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #806c5e;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 15px;
+            font-weight: bold;
+            color: #4b392f;
+            margin-bottom: 9px;
+        }
+
+        input {
+            width: 100%;
+            height: 54px;
+            border: 1px solid #d4c5b8;
+            border-radius: 10px;
+            background: #f8fbff;
+            padding: 0 16px;
+            font-size: 16px;
+            color: #49352c;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #806455;
+            box-shadow: 0 0 0 3px rgba(128, 100, 85, 0.12);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 55px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #806455;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 25px;
+            color: #745546;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 55px;
+            border: none;
+            border-radius: 10px;
+            background: #4b392f;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .login-button:hover {
+            background: #392a23;
+        }
+
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .message.error {
+            display: block;
+            background: #f8dddd;
+            color: #a33a3a;
+        }
+
+        .message.success {
+            display: block;
+            background: #dff0df;
+            color: #39703d;
+        }
+
+        .signup-text {
+            margin-top: 28px;
+            text-align: center;
+            color: #806c5e;
+            font-size: 15px;
+        }
+
+        .signup-text a {
+            color: #4b392f;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #806455;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 28px;
+            transition: color 0.2s, gap 0.2s;
+        }
+
+        .back-home:hover {
+            color: #4b392f;
+            gap: 10px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 800px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 550px;
+            }
+
+            .welcome-section {
+                display: none;
+            }
+
+            .form-section {
+                padding: 45px 30px;
+            }
+
+            .form-box h2 {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .page {
+                padding: 15px;
+            }
+
+            .login-container {
+                min-height: auto;
+                border-radius: 20px;
+            }
+
+            .form-section {
+                padding: 35px 22px;
+            }
+
+            .form-box h2 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="login-container">
+
+        <!-- =========================
+             LEFT / WELCOME
+        ========================== -->
+
+        <section class="welcome-section">
+
+            <div class="brand">
+
+                <!-- Your existing logo -->
+                <img src="logo.png" alt="The Paper Nest Logo">
+
+                <div class="brand-name">
+                    The Paper Nest
+                </div>
+
+            </div>
+
+            <div class="welcome-text">
+
+                <div class="small-heading">
+                    WELCOME BACK
+                </div>
+
+                <h1>
+                    Hello<br>
+                    again.
+                </h1>
+
+                <p>
+                    Let's get back to your nest.
+                    Keep your tasks, subjects and
+                    daily plans organized in one place.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RIGHT / LOGIN FORM
+        ========================== -->
+
+        <section class="form-section">
+
+            <div class="form-box">
+
+                <a href="/" class="back-home" id="backHome">
+                    ← Back to Home
+                </a>
+
+                <h2>Login</h2>
+
+                <p class="subtitle">
+                    Sign in to continue to your planner.
+                </p>
+
+
+                <form id="loginForm">
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                id="showPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- IMPORTANT:
+                         This does NOT use prompt().
+                         It opens the actual Paper Nest
+                         forgot-password page.
+                    -->
+
+                    <a
+                        href="/forgot-password"
+                        class="forgot-link"
+                        id="forgotPasswordLink"
+                    >
+                        Forgot password?
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                        id="loginButton"
+                    >
+                        Login
+                    </button>
+
+
+                    <div
+                        id="loginMessage"
+                        class="message"
+                    ></div>
+
+                </form>
+
+
+                <div class="signup-text">
+
+                    Don't have an account?
+                    <a href="/signup">
+                        Create an account
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const loginMessage =
+        document.getElementById("loginMessage");
+
+
+    function showMessage(message, type) {
+
+        loginMessage.textContent = message;
+
+        loginMessage.className =
+            "message " + type;
+
+    }
+
+
+    loginForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+
+        if (!email || !password) {
+
+            showMessage(
+                "Please enter your email and password.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent = "Logging in...";
+
+        loginMessage.className = "message";
+
+
+        try {
+
+            const response = await fetch(
+                "/api/auth/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (!response.ok || !data.success) {
+
+                showMessage(
+                    data.message ||
+                    "Invalid email or password.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // Save authentication information
+
+            localStorage.setItem(
+                "paperNestToken",
+                data.token
+            );
+
+
+            localStorage.setItem(
+                "paperNestUser",
+                JSON.stringify(data.user)
+            );
+
+
+            showMessage(
+                "Login successful! Opening your planner...",
+                "success"
+            );
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "/dashboard";
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+            showMessage(
+                "Unable to connect to the server. Please try again.",
+                "error"
+            );
+
+        } finally {
+
+            loginButton.disabled = false;
+
+            loginButton.textContent = "Login";
+
+        }
+
+    });
+
+
+    // =========================================================
+    // SHOW / HIDE PASSWORD
+    // =========================================================
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const showPasswordButton =
+        document.getElementById("showPassword");
+
+
+    showPasswordButton.addEventListener(
+        "click",
+        function() {
+
+            if (passwordInput.type === "password") {
+
+                passwordInput.type = "text";
+
+                showPasswordButton.textContent =
+                    "Hide";
+
+            } else {
+
+                passwordInput.type = "password";
+
+                showPasswordButton.textContent =
+                    "Show";
+
+            }
+
+        }
+    );
+
+
+    // =========================================================
+    // FORGOT PASSWORD
+    // =========================================================
+    //
+    // DO NOT USE prompt() HERE.
+    //
+    // The old version was producing:
+    //
+    // "localhost:5000 says
+    //  Enter your registered email address:"
+    //
+    // That is the browser's JavaScript prompt.
+    //
+    // This version simply opens:
+    //
+    // http://localhost:5000/forgot-password
+    //
+    // where your proper Paper Nest OTP form should appear.
+    //
+    // =========================================================
+
+    const forgotPasswordLink =
+        document.getElementById("forgotPasswordLink");
+
+
+    forgotPasswordLink.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            window.location.href =
+                "/forgot-password";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
