@@ -4461,52 +4461,34 @@ if (
    LOGOUT
    ========================================================= */
 
-const logoutButton =
-    getElement(
-        "logoutBtn",
-        "profileLogout"
-    );
+document.addEventListener("click", function (event) {
 
+    const logoutButton =
+        event.target.closest(
+            "#profileLogout, #logoutBtn"
+        );
 
-if (logoutButton) {
+    if (!logoutButton) {
+        return;
+    }
 
-    logoutButton.addEventListener(
-        "click",
-        function () {
+    console.log("Logout button clicked.");
 
-            showPaperNestConfirm(
+    localStorage.removeItem("paperNestToken");
+    localStorage.removeItem("paperNestUser");
 
-                "Log out of The Paper Nest?",
+    // Close profile panel if it is open
+    const profilePanel =
+        document.getElementById("profilePanel");
 
-                "You will need to sign in again to access your planner.",
+    if (profilePanel) {
+        profilePanel.classList.remove("show");
+    }
 
-                async function () {
+    // Redirect to login page
+    window.location.replace("/login");
 
-                    localStorage.removeItem(
-                        "paperNestToken"
-                    );
-
-
-                    localStorage.removeItem(
-                        "paperNestUser"
-                    );
-
-
-                    window.location.href =
-                        "/login";
-
-                },
-
-                "↪"
-
-            );
-
-        }
-    );
-
-}
-
-
+});
 /* =========================================================
    NOTIFICATION BUTTON
    ========================================================= */
