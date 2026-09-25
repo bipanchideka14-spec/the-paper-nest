@@ -6,6 +6,23 @@ const API_URL = "/api/tasks";
 const AUTH_API_URL = "/api/auth";
 const SUBJECT_API_URL = "/api/subjects";
 
+function updateGreeting() {
+    const greetingElement = document.getElementById("greeting");
+
+    if (!greetingElement) return;
+
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+        greetingElement.textContent = "Good morning!";
+    } else if (hour < 17) {
+        greetingElement.textContent = "Good afternoon!";
+    } else {
+        greetingElement.textContent = "Good evening!";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", updateGreeting);
 
 /* =========================================================
    DEFAULT DATA
