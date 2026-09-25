@@ -333,35 +333,36 @@ router.post("/forgot-password/send-otp", async (req, res) => {
         console.log("==================================================");
         console.log(`🔑 PASSWORD RESET OTP FOR ${cleanEmail}: ${otp}`);
         console.log("==================================================");
-
         try {
             await sendOTPEmail(cleanEmail, otp);
+
             console.log("OTP email sent successfully to:", cleanEmail);
 
             return res.json({
                 success: true,
                 message: "Verification code sent to your email."
             });
+
         } catch (emailError) {
-    console.error("EMAIL SENDING ERROR:", emailError.message);
+            console.error("EMAIL SENDING ERROR:", emailError.message);
 
-    await PasswordReset.deleteMany({ email: cleanEmail });
+            await PasswordReset.deleteMany({ email: cleanEmail });
 
-    return res.status(500).json({
-        success: false,
-        message: "Unable to send the verification email. Please try again later."
-    });
-}
+            return res.status(500).json({
+                success: false,
+                message: "Unable to send the verification email. Please try again later."
+            });
         }
+
     } catch (error) {
         console.error("SEND OTP ERROR:", error);
+
         return res.status(500).json({
             success: false,
             message: "Could not send verification code."
         });
     }
-);
-
+});
 // =========================================================
 // FORGOT PASSWORD — VERIFY OTP
 // =========================================================
