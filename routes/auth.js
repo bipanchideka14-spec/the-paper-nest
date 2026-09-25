@@ -7,7 +7,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
 const PasswordReset = require("../models/passwordreset");
@@ -27,26 +26,15 @@ if (!JWT_SECRET) {
 
 
 // =========================================================
-// BREVO SMTP EMAIL CONFIGURATION
+// BREVO API EMAIL CONFIGURATION
 // =========================================================
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false,
-
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-});
-
-
-// =========================================================
-// EMAIL SENDER
-// =========================================================
-
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM;
+
+if (!BREVO_API_KEY) {
+    console.warn("BREVO_API_KEY is missing from environment variables.");
+}
 
 if (!EMAIL_FROM) {
     console.warn("EMAIL_FROM is missing from environment variables.");
@@ -54,112 +42,165 @@ if (!EMAIL_FROM) {
 
 
 // =========================================================
-// SEND OTP EMAIL
+// SEND OTP EMAIL USING BREVO HTTPS API
 // =========================================================
 
 async function sendOTPEmail(email, otp) {
 
-    if (!process.env.SMTP_USER) {
-        throw new Error("SMTP_USER is missing from environment variables.");
-    }
-
-    if (!process.env.SMTP_PASS) {
-        throw new Error("SMTP_PASS is missing from environment variables.");
+    if (!BREVO_API_KEY) {
+        throw new Error(
+            "BREVO_API_KEY is missing from environment variables."
+        );
     }
 
     if (!EMAIL_FROM) {
-        throw new Error("EMAIL_FROM is missing from environment variables.");
+        throw new Error(
+            "EMAIL_FROM is missing from environment variables."
+        );
     }
 
-    await transporter.sendMail({
+    try {
 
-        from: `"The Paper Nest" <${EMAIL_FROM}>`,
+        const response = await fetch(
+            "https://api.brevo.com/v3/smtp/email",
+            {
+                method: "POST",
 
-        to: email,
+                headers: {
+                    "accept": "application/json",
+                    "api-key": BREVO_API_KEY,
+                    "content-type": "application/json"
+                },
 
-        subject: "The Paper Nest - Password Reset OTP",
+                body: JSON.stringify({
 
-        text:
-            `Your The Paper Nest password reset OTP is: ${otp}
+                    sender: {
+                        name: "The Paper Nest",
+                        email: EMAIL_FROM
+                    },
+
+                    to: [
+                        {
+                            email: email
+                        }
+                    ],
+
+                    subject:
+                        "The Paper Nest - Password Reset OTP",
+
+                    textContent:
+                        `Your The Paper Nest password reset OTP is: ${otp}
 
 This OTP will expire in 10 minutes.
 
 If you did not request a password reset, please ignore this email.`,
 
-        html: `
-            <div style="
-                font-family: Arial, sans-serif;
-                max-width: 600px;
-                margin: 40px auto;
-                padding: 35px;
-                background: #fffaf5;
-                border-radius: 15px;
-                text-align: center;
-                border: 1px solid #eee7dc;
-            ">
+                    htmlContent: `
+                        <div style="
+                            font-family: Arial, sans-serif;
+                            max-width: 600px;
+                            margin: 40px auto;
+                            padding: 35px;
+                            background: #fffaf5;
+                            border-radius: 15px;
+                            text-align: center;
+                            border: 1px solid #eee7dc;
+                        ">
 
-                <h1 style="
-                    color: #4e3b32;
-                    margin-bottom: 10px;
-                ">
-                    The Paper Nest
-                </h1>
+                            <h1 style="
+                                color: #4e3b32;
+                                margin-bottom: 10px;
+                            ">
+                                The Paper Nest
+                            </h1>
 
-                <h2 style="
-                    color: #4e3b32;
-                ">
-                    Password Reset
-                </h2>
+                            <h2 style="
+                                color: #4e3b32;
+                            ">
+                                Password Reset
+                            </h2>
 
-                <p style="
-                    color: #555;
-                    font-size: 16px;
-                ">
-                    Your verification code is:
-                </p>
+                            <p style="
+                                color: #555;
+                                font-size: 16px;
+                            ">
+                                Your verification code is:
+                            </p>
 
-                <div style="
-                    font-size: 32px;
-                    font-weight: bold;
-                    letter-spacing: 8px;
-                    padding: 20px;
-                    margin: 20px 0;
-                    background: #eee7dc;
-                    border-radius: 10px;
-                    color: #4e3b32;
-                ">
-                    ${otp}
-                </div>
+                            <div style="
+                                font-size: 32px;
+                                font-weight: bold;
+                                letter-spacing: 8px;
+                                padding: 20px;
+                                margin: 20px 0;
+                                background: #eee7dc;
+                                border-radius: 10px;
+                                color: #4e3b32;
+                            ">
+                                ${otp}
+                            </div>
 
-                <p style="
-                    color: #777;
-                    font-size: 14px;
-                ">
-                    This OTP will expire in
-                    <strong>10 minutes</strong>.
-                </p>
+                            <p style="
+                                color: #777;
+                                font-size: 14px;
+                            ">
+                                This OTP will expire in
+                                <strong>10 minutes</strong>.
+                            </p>
 
-                <p style="
-                    color: #777;
-                    font-size: 14px;
-                ">
-                    If you did not request a password reset,
-                    you can safely ignore this email.
-                </p>
+                            <p style="
+                                color: #777;
+                                font-size: 14px;
+                            ">
+                                If you did not request a password reset,
+                                you can safely ignore this email.
+                            </p>
 
-                <p style="
-                    color: #777;
-                    font-size: 13px;
-                    margin-top: 25px;
-                ">
-                    Do not share this OTP with anyone.
-                </p>
+                            <p style="
+                                color: #777;
+                                font-size: 13px;
+                                margin-top: 25px;
+                            ">
+                                Do not share this OTP with anyone.
+                            </p>
 
-            </div>
-        `
-    });
+                        </div>
+                    `
+                })
+            }
+        );
 
-    console.log("Password reset email sent successfully.");
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            console.error(
+                "BREVO API ERROR:",
+                data
+            );
+
+            throw new Error(
+                data.message ||
+                "Brevo email sending failed."
+            );
+        }
+
+        console.log(
+            "Password reset email sent successfully.",
+            data.messageId || ""
+        );
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "EMAIL SENDING ERROR:",
+            error.message
+        );
+
+        throw error;
+    }
 }
 
 
@@ -605,7 +646,7 @@ router.post(
 
 
             // -----------------------------------------
-            // Send OTP using Brevo
+            // Send OTP using Brevo API
             // -----------------------------------------
 
             try {
@@ -634,6 +675,7 @@ router.post(
 
 
                 // Delete OTP if email failed
+
                 await PasswordReset.deleteMany({
                     email: cleanEmail
                 });
