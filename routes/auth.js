@@ -7,7 +7,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+
 
 const User = require("../models/user");
 const PasswordReset = require("../models/passwordreset");
@@ -19,28 +19,77 @@ const JWT_SECRET = process.env.JWT_SECRET || "daily-planner-secret-key-2026";
 if (!process.env.JWT_SECRET) {
     console.warn("JWT_SECRET is missing from environment variables. Using fallback secret.");
 }
-
 // =========================================================
-// EMAIL CONFIGURATION
+// EMAIL CONFIGURATION - RESEND
 // =========================================================
 
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_APP_PASSWORD = process.env.EMAIL_APP_PASSWORD;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-let transporter = null;
-
-if (EMAIL_USER && EMAIL_APP_PASSWORD) {
-    transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: EMAIL_USER,
-            pass: EMAIL_APP_PASSWORD
-        }
-    });
-} else {
-    console.warn("EMAIL_USER or EMAIL_APP_PASSWORD is missing from environment variables.");
+if (!RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY is missing from environment variables.");
 }
 
+// Send password reset OTP using Resend
+async function sendOTPEmail(email, otp) {
+    if (!RESEND_API_KEY) {
+        throw new Error("RESEND_API_KEY is missing from environment variables.");
+    }
+
+    const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${RESEND_API_KEY}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            from: "The Paper Nest <onboarding@resend.dev>",
+            to: [email],
+            subject: "The Paper Nest - Password Reset OTP",
+            text: `Your The Paper Nest password reset OTP is: ${otp}
+
+This OTP will expire in 10 minutes.
+
+If you did not request a password reset, please ignore this email.`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
+                    <h1 style="color: #4e3b32;">The Paper Nest</h1>
+                    <h2>Password Reset</h2>
+
+                    <p>Your verification code is:</p>
+
+                    <div style="
+                        font-size: 32px;
+                        font-weight: bold;
+                        letter-spacing: 8px;
+                        padding: 20px;
+                        background: #eee7dc;
+                        text-align: center;
+                        border-radius: 10px;
+                    ">
+                        ${otp}
+                    </div>
+
+                    <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+
+                    <p style="color: #777;">
+                        If you did not request a password reset, please ignore this email.
+                    </p>
+                </div>
+            `
+        })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        console.error("RESEND API ERROR:", result);
+        throw new Error(result.message || "Failed to send email");
+    }
+
+    console.log("OTP email sent successfully.");
+
+    return result;
+}
 // =========================================================
 // HELPERS
 // =========================================================
@@ -294,12 +343,15 @@ router.post("/forgot-password/send-otp", async (req, res) => {
                 message: "Verification code sent to your email."
             });
         } catch (emailError) {
-            console.error("EMAIL SENDING ERROR:", emailError.message);
+    console.error("EMAIL SENDING ERROR:", emailError.message);
 
-            return res.json({
-                success: true,
-                message: `OTP generated! Verification code: ${otp} (Email service failed to send to inbox: Invalid Gmail App Password)`
-            });
+    await PasswordReset.deleteMany({ email: cleanEmail });
+
+    return res.status(500).json({
+        success: false,
+        message: "Unable to send the verification email. Please try again later."
+    });
+}
         }
     } catch (error) {
         console.error("SEND OTP ERROR:", error);
@@ -457,13 +509,15 @@ router.post("/forgot-password/resend-otp", async (req, res) => {
                 message: "A new OTP has been sent to your email."
             });
         } catch (emailError) {
-            console.error("RESEND EMAIL ERROR:", emailError.message);
+    console.error("RESEND EMAIL ERROR:", emailError.message);
 
-            return res.json({
-                success: true,
-                message: `New OTP generated! Verification code: ${otp} (Email service failed to send to inbox: Invalid Gmail App Password)`
-            });
-        }
+    await PasswordReset.deleteMany({ email: cleanEmail });
+
+    return res.status(500).json({
+        success: false,
+        message: "Unable to resend the verification email. Please try again later."
+    });
+}
     } catch (error) {
         console.error("RESEND OTP ERROR:", error);
         return res.status(500).json({
