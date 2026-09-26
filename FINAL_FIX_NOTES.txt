@@ -1,0 +1,5 @@
+THE PAPER NEST — FINAL HERO UPDATE
+- Hero image replaced with the user's exact uploaded image.
+- Full portrait image is preserved; no crop or distortion is applied.
+- Hero frame kept moderate-sized and aligned with the existing landing-page layout.
+- Other project files and functionality are preserved from the working base.

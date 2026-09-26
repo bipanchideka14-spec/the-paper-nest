@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Paper Nest — Your Daily Planner</title>
+<style>
+:root{--bg:#f7f0e6;--paper:#fffaf3;--ink:#4d3022;--muted:#7e6656;--accent:#c87957;--sage:#7d8965;--line:#eadfd2;--brown:#4d3022}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.6;overflow-x:hidden}
+.nav{height:82px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;border-bottom:1px solid rgba(92,61,42,.10);background:#fbf6ef;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font:26px Georgia,serif;white-space:nowrap}.brand img{width:42px;height:42px;object-fit:contain}
+.navlinks{display:flex;gap:38px}.navlinks a{color:var(--muted);text-decoration:none;font-weight:600}.navlinks a:hover{color:var(--ink)}
+.nav-actions{display:flex;gap:12px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:12px 25px;border-radius:999px;border:1px solid #cbb8a6;color:var(--ink);background:transparent;font-weight:700;transition:.2s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--brown);color:#fffaf3;border-color:var(--brown)}
+.hero{width:min(1240px,88%);margin:0 auto;padding:48px 0 68px;display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:52px;align-items:center}
+.hero>div:first-child{min-width:0}.eyebrow{display:inline-block;padding:8px 17px;border-radius:999px;background:#f0e5d6;color:#8a624b;font-weight:700;font-size:14px;letter-spacing:.2px}
+.hero h1{font:400 clamp(52px,4vw,72px)/.97 Georgia,serif;letter-spacing:-1.8px;margin:30px 0 25px;max-width:650px}.hero h1 em{color:var(--accent);font-style:italic}.hero p{font-size:18px;line-height:1.6;color:var(--muted);max-width:620px;margin:0 0 28px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap}.hero-actions .btn{padding:15px 28px;font-size:17px}.stats{display:flex;margin-top:34px}.stat{padding:0 35px;border-left:1px solid #dbcdbc}.stat:first-child{padding-left:0;border-left:0}.stat b{font:30px Georgia,serif}.stat span{display:block;color:var(--muted);font-size:13px}
+.hero-side{position:relative;width:430px;padding:0 4px 18px 0;justify-self:end}.hero-card{width:400px;max-width:400px;margin:0 0 0 auto;padding:10px;background:#fff;border-radius:30px;box-shadow:0 22px 60px rgba(79,51,35,.14);transform:rotate(1.1deg);overflow:hidden}.hero-card img{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:22px;object-fit:contain;object-position:center}.hero-card.image-missing{min-height:615px;background:linear-gradient(135deg,#ead9c6,#d9b995 55%,#7e6656);position:relative}.hero-card.image-missing::after{content:'The Paper Nest';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:italic 42px Georgia,serif;color:#fffaf3}
+.bubble{position:absolute;z-index:5;background:#fff;border-radius:18px;padding:13px 17px;box-shadow:0 12px 35px rgba(75,48,32,.12);font-size:14px;color:var(--muted)}.bubble strong{display:block;color:var(--ink)}.done{top:-10px;left:-18px;width:170px}.saved{bottom:0;right:-8px}
+.section{padding:82px 6%;max-width:1400px;margin:auto}.section.kicker{text-align:center}.kicker>.eyebrow{background:transparent;padding:0;color:var(--sage);letter-spacing:3px}.section h2{font:400 clamp(40px,3.2vw,58px)/1.08 Georgia,serif;margin:14px 0;color:var(--ink)}.section-intro{max-width:650px;margin:0 auto 45px;color:var(--muted);font-size:17px;text-align:center}
+#features{padding-top:76px;padding-bottom:88px}.features{width:min(1120px,92%);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:0 auto;align-items:start}.feature{padding:0;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:#fbf4eb;box-shadow:0 8px 28px rgba(79,51,35,.05)}.feature-image{display:block;width:100%;height:205px;object-fit:cover;object-position:center}.feature-body{padding:25px 26px 30px;text-align:center}.feature-icon{font-size:29px;line-height:1}.feature h3{font:400 26px/1.2 Georgia,serif;margin:17px 0 9px}.feature p{font-size:15.5px;line-height:1.6;color:var(--muted);margin:0}
+#how{width:100%;max-width:none;background:#efe4d1;padding-left:6%;padding-right:6%}.steps{width:min(1120px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:55px auto 10px;position:relative}.steps::before{content:"";position:absolute;left:8%;right:8%;top:31px;border-top:2px dashed #cdb08a;z-index:0}.step{padding:0 22px;text-align:center;position:relative;z-index:1}.step-num{width:64px;height:64px;border:2px solid #cdb08a;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;background:#fffaf3;color:#6a4936;font:28px Georgia,serif}.step h3{font:400 22px Georgia,serif;margin:0 0 9px}.step p{color:var(--muted);font-size:15px;line-height:1.55;margin:0}
+#testimonials{width:100%;max-width:none;padding-left:6%;padding-right:6%;padding-top:92px;padding-bottom:102px}.testimonials{width:min(1120px,100%);display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:45px auto 0}.quote{background:#fbf4eb;border:1px solid var(--line);border-radius:26px;padding:30px 34px;min-height:330px}.stars{letter-spacing:3px}.quote p{color:var(--muted);font-size:16px;line-height:1.7;font-style:italic}.person{font-weight:700}.role{font-size:13px;color:var(--muted)}
+.cta{margin:0;background:#563c2d;padding:92px 30px 86px;text-align:center;color:#fffaf3;position:relative;overflow:hidden}.cta h2{color:#fffaf3;margin:14px 0 18px}.cta p{color:#eadfd5}.cta .btn.primary{background:#fffaf3;color:#4d3022;border-color:#fffaf3}.cta a[href="/login"]{color:#fffaf3!important}.cta .small{color:#f4e6d7}.footer{text-align:center;padding:30px 6%;color:#d9c8ba;font-size:13px;background:#2f2119}.footer a{color:#fffaf3!important}
+
+/* Final hero image sizing: preserve the complete portrait image without cropping. */
+@media (min-width:1051px){
+  .hero-card{width:400px;max-width:400px}
+  .hero-card img{width:100%;height:auto;display:block;object-fit:contain}
+}
+@media(max-width:1050px){.hero{grid-template-columns:minmax(0,1fr) 390px;gap:35px}.hero-side{width:390px}.hero-card{width:370px}.features{width:94%;gap:20px}.feature-image{height:190px}}
+@media(max-width:850px){.nav{padding:0 5%}.navlinks{display:none}.hero{width:90%;grid-template-columns:1fr;gap:35px;padding-top:40px}.hero-side{width:100%;justify-self:center;display:flex;justify-content:center}.hero-card{width:min(460px,100%);margin:0 auto}.done{left:4px}.saved{right:4px}.features,.testimonials{grid-template-columns:1fr;max-width:520px}.feature-image{height:210px}.steps{grid-template-columns:1fr 1fr;gap:40px 10px}.steps::before{display:none}}
+@media(max-width:600px){.nav-actions .btn:first-child{display:none}.hero{padding:35px 0 55px}.hero h1{font-size:52px}.hero p{font-size:17px}.stats{flex-wrap:wrap;gap:20px}.stat{padding:0 18px}.steps{grid-template-columns:1fr}.section{padding-top:60px;padding-bottom:60px}.bubble{font-size:12px}.done{top:-12px}.saved{bottom:8px}}
+@media(prefers-reduced-motion:no-preference){.hero>div:first-child,.hero-side{opacity:0;transform:translateY(24px);animation:fadeUp .75s ease forwards}.hero-side{animation-delay:.15s}.bubble{animation:float 4.5s ease-in-out infinite}.saved{animation-delay:-2s}.section .feature,.section .step,.section .quote{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}.section.is-visible .feature,.section.is-visible .step,.section.is-visible .quote{opacity:1;transform:none}.section.is-visible .feature:nth-child(2),.section.is-visible .step:nth-child(2),.section.is-visible .quote:nth-child(2){transition-delay:.1s}.section.is-visible .feature:nth-child(3),.section.is-visible .step:nth-child(3),.section.is-visible .quote:nth-child(3){transition-delay:.2s}.section.is-visible .step:nth-child(4){transition-delay:.3s}}
+@keyframes fadeUp{to{opacity:1;transform:none}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="/"><img src="logo.png" alt="The Paper Nest logo">The Paper Nest</a>
+  <nav class="navlinks"><a href="#features">Features</a><a href="#how">How It Works</a><a href="#testimonials">Testimonials</a></nav>
+  <div class="nav-actions"><a class="btn" href="/login">Log In</a><a class="btn primary" href="/signup">Get Started</a></div>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">● &nbsp;Your cozy planning companion</div>
+    <h1>Plan your day<br>with <em>intention</em><br>&amp; grace.</h1>
+    <p>The Paper Nest is a warm, beautiful daily planner that keeps your tasks, notes, and subjects lovingly organised — all in one cosy place.</p>
+    <div class="hero-actions"><a class="btn primary" href="/signup">Start Planning — It's Free</a><a class="btn" href="/login">Sign In</a></div>
+    <div class="stats"><div class="stat"><b>100%</b><span>Free to use</span></div><div class="stat"><b>∞</b><span>Tasks &amp; notes</span></div><div class="stat"><b>1</b><span>Cozy nest for all</span></div></div>
+  </div>
+  <div class="hero-side">
+    <div class="hero-card">
+      <img src="hero_planner.jpg" alt="A cozy daily planner journal on a warm wooden desk" onerror="this.style.display='none';this.parentElement.classList.add('image-missing')">
+    </div>
+    <div class="bubble done">✅ <strong>3 tasks done!</strong>Keep going 🌿</div>
+    <div class="bubble saved">📝 &nbsp;<strong>Today's note saved</strong>Synced instantly</div>
+  </div>
+</section>
+<section class="section kicker" id="features">
+  <div class="eyebrow">EVERYTHING YOU NEED</div><h2>A planner that feels like<br>home.</h2><p class="section-intro">Thoughtfully designed with warmth and simplicity — so you can focus on what truly matters.</p>
+  <div class="features">
+    <article class="feature">
+      <img class="feature-image" src="feature_tasks.jpg" alt="Task management illustration">
+      <div class="feature-body"><div class="feature-icon">📋</div><h3>Smart Task Manager</h3><p>Add, prioritise, and track your daily tasks with categories, deadlines, and progress tracking — all in a calming layout.</p></div>
+    </article>
+    <article class="feature">
+      <img class="feature-image" src="feature_notes.jpg" alt="Notes and sticky notes on a warm desk">
+      <div class="feature-body"><div class="feature-icon">🗒️</div><h3>Personal Notes</h3><p>Capture your thoughts, ideas, and reminders in beautiful note cards that feel like your own private journal.</p></div>
+    </article>
+    <article class="feature">
+      <img class="feature-image" src="feature_subjects.jpg" alt="Subject progress tracker">
+      <div class="feature-body"><div class="feature-icon">📚</div><h3>Subject Progress</h3><p>Track how far you've come in each subject with visual progress bars that celebrate every small milestone.</p></div>
+    </article>
+  </div>
+</section>
+<section class="section kicker" id="how">
+  <div class="eyebrow">SIMPLE BY DESIGN</div><h2>Getting started is<br>effortless.</h2><p class="section-intro">Four gentle steps and your nest is ready.</p>
+  <div class="steps">
+    <article class="step"><div class="step-num">1</div><h3>Create an Account</h3><p>Sign up in seconds — no credit card, no fuss. Just your name and email.</p></article>
+    <article class="step"><div class="step-num">2</div><h3>Add Your Tasks</h3><p>Jot down everything on your mind. Set priorities, categories, and time.</p></article>
+    <article class="step"><div class="step-num">3</div><h3>Track Your Progress</h3><p>Watch your to-dos turn into done ✓ — feel the satisfaction every day.</p></article>
+    <article class="step"><div class="step-num">4</div><h3>Come Back Tomorrow</h3><p>Your nest is always here, warm and waiting, ready for a fresh new day.</p></article>
+  </div>
+</section>
+<section class="section kicker" id="testimonials">
+  <div class="eyebrow">KIND WORDS</div><h2>People who love<br>their Paper Nest.</h2><p class="section-intro">Real thoughts from real planners. ✨</p>
+  <div class="testimonials">
+    <article class="quote"><div class="stars">★★★★★</div><p>“This is the most calming planner I've ever used. The design is so beautiful — I actually look forward to planning my day now!”</p><div class="person">A &nbsp; Ananya S.</div><div class="role">Student &amp; Bookworm</div></article>
+    <article class="quote"><div class="stars">★★★★★</div><p>“Finally, a planner that doesn't feel overwhelming. The cozy aesthetic genuinely helps me stay focused and motivated throughout the day.”</p><div class="person">R &nbsp; Riya M.</div><div class="role">Engineering Student</div></article>
+    <article class="quote"><div class="stars">★★★★★</div><p>“I've tried so many planners but The Paper Nest is the one that stuck. It's warm, it's simple, and it just works beautifully.”</p><div class="person">P &nbsp; Priya K.</div><div class="role">Writer &amp; Journaller</div></article>
+  </div>
+</section>
+<section class="cta"><div class="small">🪺 Free forever. No catch.</div><h2>Ready to find your<br>cozy corner?</h2><p>Join The Paper Nest and start planning with intention today.</p><a class="btn primary" href="/signup">Create Your Free Account</a><div style="margin-top:14px"><a href="/login" style="color:var(--ink)">Already have an account?</a></div></section>
+</main>
+<footer class="footer">© 2026 The Paper Nest &nbsp;·&nbsp; Made with 🍵 and warmth &nbsp;·&nbsp; <a href="/login" style="color:inherit">Login</a> &nbsp;·&nbsp; <a href="/signup" style="color:inherit">Sign Up</a></footer>
+
+<script>
+(function(){
+  const sections=[...document.querySelectorAll('.section')];
+  const cta=document.querySelector('.cta');
+  const reveal=(el)=>el&&el.classList.add('is-visible');
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{ if(entry.isIntersecting) reveal(entry.target); });
+    },{threshold:.16,rootMargin:'0px 0px -8% 0px'});
+    sections.forEach(s=>observer.observe(s));
+    if(cta) observer.observe(cta);
+  }else{ sections.forEach(reveal); reveal(cta); }
+
+  // Keep the landing page lively while scrolling: softly reveal each section
+  // and update the navigation link for the section currently in view.
+  const links=[...document.querySelectorAll('.navlinks a')];
+  const targets=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if('IntersectionObserver' in window && targets.length){
+    const navObserver=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        links.forEach(a=>a.removeAttribute('aria-current'));
+        const i=targets.indexOf(entry.target);
+        if(i>=0) links[i].setAttribute('aria-current','page');
+      });
+    },{threshold:.45});
+    targets.forEach(t=>navObserver.observe(t));
+  }
+})();
+</script>
+</body>
+</html>
