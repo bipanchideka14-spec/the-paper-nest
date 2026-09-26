@@ -1890,6 +1890,19 @@ function updateStatistics() {
         percentage
     );
 
+    /* ACTIVE SUBJECTS */
+
+const activeSubjects =
+    document.getElementById("activeSubjects");
+
+if (activeSubjects) {
+
+    activeSubjects.textContent =
+        Array.isArray(data.subjects)
+            ? data.subjects.length
+            : 0;
+
+}
 }
 
 
