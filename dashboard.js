@@ -4466,100 +4466,48 @@ if (
 
 }
 
-
 /* =========================================================
-   LOGOUT
+   LOGOUT MODAL
    ========================================================= */
 
-const profileLogout =
-    document.getElementById(
-        "profileLogout"
-    );
+const profileLogout = document.getElementById("profileLogout");
+const sidebarLogout = document.getElementById("logoutBtn");
 
-const sidebarLogout =
-    document.getElementById(
-        "logoutBtn"
-    );
+const logoutModal = document.getElementById("logoutModal");
+const logoutModalClose = document.getElementById("logoutModalClose");
+const logoutCancel = document.getElementById("logoutCancel");
+const logoutConfirm = document.getElementById("logoutConfirm");
 
 
-const logoutModal =
-    document.getElementById(
-        "logoutModal"
-    );
-
-const logoutModalClose =
-    document.getElementById(
-        "logoutModalClose"
-    );
-
-const logoutCancel =
-    document.getElementById(
-        "logoutCancel"
-    );
-
-const logoutConfirm =
-    document.getElementById(
-        "logoutConfirm"
-    );
-
-
-/* =========================================================
-   OPEN LOGOUT MODAL
-   ========================================================= */
-
+/* OPEN LOGOUT MODAL */
 function openLogoutModal(event) {
 
     if (event) {
-
         event.preventDefault();
-
         event.stopPropagation();
-
     }
-
 
     if (logoutModal) {
-
-        logoutModal.classList.add(
-            "show"
-        );
-
+        logoutModal.classList.add("show");
     }
 
-
-    // Close profile dropdown
     if (profilePanel) {
-
-        profilePanel.classList.remove(
-            "show"
-        );
-
+        profilePanel.classList.remove("show");
     }
-
 }
 
 
-/* =========================================================
-   CLOSE LOGOUT MODAL
-   ========================================================= */
-
+/* CLOSE LOGOUT MODAL */
 function closeLogoutModal() {
 
     if (logoutModal) {
-
-        logoutModal.classList.remove(
-            "show"
-        );
-
+        logoutModal.classList.remove("show");
     }
 
 }
 
 
-/* =========================================================
-   PROFILE LOGOUT
-   ========================================================= */
-
+/* PROFILE LOGOUT BUTTON */
 if (profileLogout) {
 
     profileLogout.addEventListener(
@@ -4570,10 +4518,7 @@ if (profileLogout) {
 }
 
 
-/* =========================================================
-   SIDEBAR LOGOUT
-   ========================================================= */
-
+/* SIDEBAR LOGOUT BUTTON */
 if (sidebarLogout) {
 
     sidebarLogout.addEventListener(
@@ -4584,6 +4529,78 @@ if (sidebarLogout) {
 }
 
 
+/* CANCEL */
+if (logoutCancel) {
+
+    logoutCancel.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeLogoutModal();
+
+        }
+    );
+
+}
+
+
+/* CLOSE X */
+if (logoutModalClose) {
+
+    logoutModalClose.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeLogoutModal();
+
+        }
+    );
+
+}
+
+
+/* CLICK OUTSIDE MODAL */
+if (logoutModal) {
+
+    logoutModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === logoutModal) {
+                closeLogoutModal();
+            }
+
+        }
+    );
+
+}
+
+
+/* ACTUAL LOGOUT */
+if (logoutConfirm) {
+
+    logoutConfirm.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            localStorage.removeItem("paperNestToken");
+            localStorage.removeItem("paperNestUser");
+
+            window.location.href = "/login";
+
+        }
+    );
+
+}
 /* =========================================================
    CANCEL
    ========================================================= */
